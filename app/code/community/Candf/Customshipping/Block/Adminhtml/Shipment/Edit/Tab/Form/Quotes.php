@@ -6,12 +6,14 @@ class PickUpAddresses
     public $CountryCode;
     public $Suburb;
     public $PostCode;
+    public $CountryName;
 }
 class DeliveryAddresses
 {
     public $CountryCode;
     public $Suburb;
     public $PostCode;
+    public $CountryName;
 }
 class CFParam_Rate
 {
@@ -79,11 +81,13 @@ class Candf_Customshipping_Block_Adminhtml_Shipment_Edit_Tab_Form_Quotes extends
                     $adminselectedLocationsuburb = $adminselectedLocationDetails['suburb'];
                     $adminselectedLocationzip = $adminselectedLocationDetails['zip'];
                     $pickupaddress->CountryCode = 'AUS';
+                    $pickupaddress->CountryName = 'Australia';
                     $pickupaddress->PostCode = $adminselectedLocationzip;
                     $pickupaddress->Suburb = $adminselectedLocationsuburb;
                     $rateRequest->PickUpAddress = $pickupaddress;
                 } else {
                     $pickupaddress->CountryCode = 'AUS';
+                    $pickupaddress->CountryName = 'Australia';
                     $pickupaddress->PostCode = $candconfig['warehouse']['warehouse_code'];
                     $pickupaddress->Suburb = $candconfig['warehouse']['warehouse_suburb'];
                     $rateRequest->PickUpAddress = $pickupaddress;
@@ -91,6 +95,7 @@ class Candf_Customshipping_Block_Adminhtml_Shipment_Edit_Tab_Form_Quotes extends
 
                 $deliveryaddress = new DeliveryAddresses();
                 $deliveryaddress->CountryCode = 'AUS';
+                $deliveryaddress->CountryName = 'Australia';
                 $deliveryaddress->PostCode = $destinationpostcode;
                 $deliveryaddress->Suburb = $destinationcity;
                 $rateRequest->DeliveryAddress = $deliveryaddress;

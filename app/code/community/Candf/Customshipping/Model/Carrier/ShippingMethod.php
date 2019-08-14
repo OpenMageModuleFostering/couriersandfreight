@@ -6,6 +6,7 @@ ini_set('soap.wsdl_cache_ttl', 0);
 class PickUpAddress {
 
     public $CountryCode;
+    public $CountryName;
     public $Suburb;
     public $PostCode;
 
@@ -14,6 +15,7 @@ class PickUpAddress {
 class DeliveryAddress {
 
     public $CountryCode;
+    public $CountryName;
     public $Suburb;
     public $PostCode;
 
@@ -298,12 +300,15 @@ class Candf_Customshipping_Model_Carrier_ShippingMethod extends Mage_Shipping_Mo
 
                             $pickupaddress = new PickUpAddress();
                             $pickupaddress->CountryCode = 'AUS';
+                            $pickupaddress->CountryName = 'Australia';
+
                             $pickupaddress->PostCode = $candconfig['warehouse']['warehouse_code'];
                             $pickupaddress->Suburb = $candconfig['warehouse']['warehouse_suburb'];
                             $rateRequest->PickUpAddress = $pickupaddress;
 
                             $deliveryaddress = new DeliveryAddress();
                             $deliveryaddress->CountryCode = 'AUS';
+                            $deliveryaddress->CountryName = 'Australia';
                             $deliveryaddress->PostCode = $shippingaddress['postcode'];
                             $deliveryaddress->Suburb = $shippingaddress['city'];
                             $rateRequest->DeliveryAddress = $deliveryaddress;

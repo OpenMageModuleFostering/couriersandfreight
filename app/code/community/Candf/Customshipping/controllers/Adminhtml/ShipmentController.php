@@ -8,6 +8,7 @@ class PickUpAddress
 {
     public $CompanyName;
     public $CountryCode;
+    public $CountryName;
     public $EmailAddress;
     public $FirstName;
     public $LastName;
@@ -24,6 +25,7 @@ class DeliveryAddress
 {
     public $CompanyName;
     public $CountryCode;
+    public $CountryName;
     public $EmailAddress;
     public $FirstName;
     public $LastName;
@@ -461,6 +463,7 @@ class Candf_Customshipping_Adminhtml_ShipmentController extends Mage_Adminhtml_C
         $deliveryaddress = new DeliveryAddress();
         $deliveryaddress->CompanyName = $deliverycompany;
         $deliveryaddress->CountryCode = 'AUS';
+        $deliveryaddress->CountryName = 'Australia';
         $deliveryaddress->FirstName = $deliveryfirstname;
         $deliveryaddress->LastName = $deliverylastname;
         $deliveryaddress->Line1 = $deliverystreet;
@@ -498,12 +501,14 @@ class Candf_Customshipping_Adminhtml_ShipmentController extends Mage_Adminhtml_C
 
 
             $pickupaddress->CountryCode = 'AUS';
+            $pickupaddress->CountryName = 'Australia';
             $pickupaddress->CompanyName = $adminselectedLocationDetails['company_name'];
             $pickupaddress->FirstName = $adminselectedLocationDetails['contact_name'];
             $pickupaddress->LastName = $adminselectedLocationDetails['contact_name'];
             $pickupaddress->EmailAddress = $adminselectedLocationDetails['contact_email'];
             $pickupaddress->TelephoneNumber = $adminselectedLocationDetails['phone1'];
             $pickupaddress->CountryCode = 'AUS';
+            $pickupaddress->CountryName = 'Australia';
             $pickupaddress->Line1 = $adminselectedLocationDetails['line1'];
             $pickupaddress->Line2 = $adminselectedLocationDetails['line2'];
             $pickupaddress->PostCode = $adminselectedLocationDetails['zip'];
@@ -516,6 +521,7 @@ class Candf_Customshipping_Adminhtml_ShipmentController extends Mage_Adminhtml_C
             $pickupaddress->EmailAddress = $pickupemail;
             $pickupaddress->TelephoneNumber = $pickuptelephone;
             $pickupaddress->CountryCode = 'AUS';
+            $pickupaddress->CountryName = 'Australia';
             $pickupaddress->Line1 = $pickupstreet1;
             $pickupaddress->Line2 = $pickupstreet2;
             $pickupaddress->PostCode = $pickuppostcode;

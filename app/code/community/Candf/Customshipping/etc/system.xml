@@ -141,6 +141,7 @@
                         </rulestatus>
                     </fields>
                 </rule>
+                <!--
                 <insurance translate="label" module="customshipping">
                     <label>Warranty</label>
                     <frontend_type>text</frontend_type>
@@ -175,6 +176,7 @@
                         </insurance_markup>
                     </fields>
                 </insurance>
+                -->
                 <units translate="label" module="customshipping">
                     <label>Units</label>
                     <frontend_type>text</frontend_type>

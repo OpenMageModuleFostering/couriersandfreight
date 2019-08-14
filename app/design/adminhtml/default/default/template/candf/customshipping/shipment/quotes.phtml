@@ -187,9 +187,9 @@ $getAdditionalServiceData= $collection->addFieldToFilter('order_id', array('in' 
 
                 <tr>
                     <td colspan="6" class="additionalser" ><div>
-                                <div class="backend-available-additional-servicess">
+                            <div class="backend-available-additional-servicess">
 
-                                </div>
+                            </div>
                     </td>
                 </tr>
 
@@ -236,17 +236,17 @@ $getAdditionalServiceData= $collection->addFieldToFilter('order_id', array('in' 
                                     <td class="last"><a href="<?php echo $this->getUrl('*/*/validatebook', array('shipment' => $this->getShipment()->getId(), 'carrierid' => $carrierid, 'serviceid' => $serviceid, 'cost' => $requestprice, 'carriername' => $carriertitle.'_'.$servicename, 'eta' => $eta)); ?>"><?php echo "Make Booking"; ?></a></td>
                                 <?php } else {
 
-                                        if(!empty($getAdditionalServiceData['0']['additional_shipment_id'])) {
-                                            $additionalserviceId = $getAdditionalServiceData['0']['additional_shipment_id'];
-                                            ?>
+                                    if(!empty($getAdditionalServiceData['0']['additional_shipment_id'])) {
+                                        $additionalserviceId = $getAdditionalServiceData['0']['additional_shipment_id'];
+                                        ?>
 
-                                            <td class="last get-bookingwith-addtionalservicess"><a href="<?php echo $this->getUrl('*/*/book', array('shipment' => $this->getShipment()->getId(), 'carrierid' => $carrierid, 'serviceid' => $serviceid, 'cost' => $requestprice, 'carriername' => $carriertitle.'_'.$servicename, 'eta' => $eta)); ?>" ><?php echo "Make Booking"; ?></a></td>
+                                        <td class="last get-bookingwith-addtionalservicess"><a href="<?php echo $this->getUrl('*/*/book', array('shipment' => $this->getShipment()->getId(), 'carrierid' => $carrierid, 'serviceid' => $serviceid, 'cost' => $requestprice, 'carriername' => $carriertitle.'_'.$servicename, 'eta' => $eta)); ?>" ><?php echo "Make Booking"; ?></a></td>
 
-                                        <?php
-                                        }elseif(empty($getAdditionalServiceData)){
-                                    ?>
-                                    <td class="last"><a href="<?php echo $this->getUrl('*/*/book', array('shipment' => $this->getShipment()->getId(), 'carrierid' => $carrierid, 'serviceid' => $serviceid, 'cost' => $requestprice, 'carriername' => $carriertitle.'_'.$servicename, 'eta' => $eta)); ?>" ><?php echo "Make Booking"; ?></a></td>
-                                <?php }}
+                                    <?php
+                                    }elseif(empty($getAdditionalServiceData)){
+                                        ?>
+                                        <td class="last"><a href="<?php echo $this->getUrl('*/*/book', array('shipment' => $this->getShipment()->getId(), 'carrierid' => $carrierid, 'serviceid' => $serviceid, 'cost' => $requestprice, 'carriername' => $carriertitle.'_'.$servicename, 'eta' => $eta)); ?>" ><?php echo "Make Booking"; ?></a></td>
+                                    <?php }}
                             }
                             ?>
                             <!--<td class="last"><a href="<?php echo $this->getUrl('*/*/save', array('carrierid' => $carrierid, 'servicename' => $servicename)); ?>" ><?php echo "Select Quote"; ?></a></td>-->
@@ -287,7 +287,7 @@ $getAdditionalServiceData= $collection->addFieldToFilter('order_id', array('in' 
                         data: { 'CarrierId' : CarrierId },
                         dataType: 'html',
                         success: function(data){
-                             $(".backend-available-additional-servicess").html(data);
+                            $(".backend-available-additional-servicess").html(data);
                         }
                     });
 
