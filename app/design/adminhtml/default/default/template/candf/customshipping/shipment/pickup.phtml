@@ -1,0 +1,248 @@
+<?php
+
+$startpickuptimes = Array
+(
+    '0' => '08:00',
+    '1' => '09:00',
+    '2' => '10:00',
+    '3' => '11:00',
+    '4' => '12:00',
+    '5' => '13:00',
+    '6' => '14:00',
+    '7' => '15:00',
+    '8' => '16:00',
+    '9' => '17:00'
+);
+
+$endpickuptimes = Array
+(
+    '0' => '08:00',
+    '1' => '09:00',
+    '2' => '10:00',
+    '3' => '11:00',
+    '4' => '12:00',
+    '5' => '13:00',
+    '6' => '14:00',
+    '7' => '15:00',
+    '8' => '16:00',
+    '9' => '17:00'
+);
+
+?>
+
+
+<div class="entry-edit">
+    <div class="entry-edit-head">
+        <h4><?php echo $this->__('Pick-up Date'); ?></h4>
+    </div>
+    <div class="fieldset">
+        <?php if ($this->getShipment()->getStatus() == Candf_Customshipping_Model_System_Config_Backend_Shipment_Status::PENDING): ?>
+            <table cellspacing="0" class="form-list">
+                <tr>
+                    <?php
+
+                    $bVal = $this->getShipment()->hasCutOffPassedforToday();
+                    if(!$bVal){
+                        $tomorrow = mktime(0,0,0,date("m"),date("d"),date("Y"));
+                    }else{
+                        $tomorrow = mktime(0,0,0,date("m"),date("d")+1,date("Y"));
+                    }
+                    ?>
+                    <td class="label">
+                        <input type="radio" name="ready" value="<?php echo date("Y-m-d", $tomorrow); ?>" onclick="$('select_pick_up').hide();" id="ready_0" />
+                    </td>
+                    <td class="value"><label><?php echo $this->__('ASAP'); ?></label></td>
+                </tr>
+                <tr>
+                    <td class="label">
+                        <input type="radio" name="ready" value="1" onclick="$('select_pick_up').show();" id="ready_1" /></td>
+                    <td class="value"><label><?php echo $this->__('Select Date:'); ?></label>
+
+                    </td>
+                </tr>
+            </table>
+        <?php endif; ?>
+
+        <div id="select_pick_up">
+            <table cellspacing="0" class="form-list">
+                <tr>
+                    <td class="label"><label style="width:80px;"><?php echo $this->__('Date'); ?></label></td>
+                    <td class="value">
+                        <?php if ($this->getShipment()->getStatus() == Candf_Customshipping_Model_System_Config_Backend_Shipment_Status::PENDING): ?>
+                            <input id="ready_date" name="ready_date" value="<?php echo $this->getShipment()->getReadyDate(); ?>" class="validate-date-with-current-date" style="width:100px;" />
+                            <input type="hidden" name="today_date" id="today_date" value="<?php echo date("Y-m-d"); ?>" />
+                            <img id="ready_date_trigger" alt="Select date" title="Select date" class="v-middle" src="<?php echo $this->getSkinUrl('images/grid-cal.gif'); ?>" />
+                            <script type="text/javascript">
+                                //<![CDATA[
+                                Calendar.setup({
+                                    inputField: "ready_date",
+                                    ifFormat: "%Y-%m-%d",
+                                    showsTime: false,
+                                    button: "ready_date_trigger",
+                                    align: "Bl",
+                                    singleClick : true,
+                                    disableFunc: function(date) {
+                                        //disable all sundays and saturday
+                                        if((date.getDay() == 0) || (date.getDay() == 6) )
+                                        {
+                                            return true;
+                                        }
+                                    }
+                                });
+                                //]]>
+                            </script>
+                        <?php else: ?>
+                            <?php echo $this->getShipment()->getReadyDate(); ?>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+
+            </table>
+        </div>
+
+
+
+        <table cellspacing="0" class="form-list">
+            <?php $timenote = array('Am','Pm'); ?>
+
+            <tr>
+                <td class="label"><label>Pick-up Start Time:</label></td>
+                <?php if ($this->getShipment()->getStatus() == Candf_Customshipping_Model_System_Config_Backend_Shipment_Status::PENDING){ ?>
+                    <td>
+                        <select name="pickupstarttime" id="pickupstarttime" onchange="return createclosetime();" class="required-entry validate-pickupstarttime"><option value="">0:00</option>
+                            <?php foreach($startpickuptimes as $times){ ?>
+                                <?php echo $times;?>
+                            <option value="<?php echo str_replace(':','',$times); ?>" <?php if($startpickuptimes == str_replace(':','',$times)) { ?> selected="selected" <?php } ?>>
+                                <?php echo $times; ?></option><?php } ?>
+                        </select>
+                    </td>
+                <?php } else { ?>
+                    <td><?php $getstarttime = $this->getShipment()->getPickupstarttime(); echo $getstarttime = substr_replace($getstarttime, ':' , strlen($getstarttime)-2 , 0); ?></td>
+                <?php } ?>
+            </tr>
+            <tr>
+                <?php if ($this->getShipment()->getStatus() == Candf_Customshipping_Model_System_Config_Backend_Shipment_Status::PENDING){ ?>
+                    <td class="label"><label>Pick-up Close Time:</label></td>
+                    <td>
+                        <select name="pickupclosetime" id="pickupclosetime" class="required-entry validate-pickupclosetime" onchange="return checkTimeDifference();" ><option value="">0:00</option><?php foreach($endpickuptimes as $times){ ?>
+                                <option value="<?php echo str_replace(':','',$times); ?>" <?php if($this->getShipment()->getPickupclosetime() == str_replace(':','',$times)) { ?> selected="selected" <?php } ?>><?php echo $times; ?>
+                                </option><?php } ?>
+                        </select>
+                    </td>
+                <?php } else { ?>
+                    <td class="label"><label>Pick-up Close Time:</label></td>
+                    <td><?php $getclosetime = $this->getShipment()->getPickupclosetime(); echo $getclosetime = substr_replace($getclosetime, ':' , strlen($getclosetime)-2 , 0); ?></td>
+                <?php } ?>
+            </tr>
+        </table>
+
+        <?php if ($this->getShipment()->getStatus() == Candf_Customshipping_Model_System_Config_Backend_Shipment_Status::PENDING): ?>
+            <script type="text/javascript">
+                <?php if ($this->getShipment()->getAsap() == 0): ?>
+                $('ready_1').checked = true;
+                $('select_pick_up').show();
+                <?php else: ?>
+                $('ready_0').checked = true;
+                $('select_pick_up').hide();
+                <?php endif; ?>
+            </script>
+        <?php endif; ?>
+
+
+
+
+
+
+    </div>
+</div>
+<script type="text/javascript">
+    Validation.addAllThese([
+        ['validate-date-with-current-date', 'Please enter a valid date.', function(v) {
+            if(document.getElementById("ready_0").checked)
+            {
+                return true;
+            }
+            else
+            {
+                var today_date = document.getElementById("today_date").value;
+                if(today_date > v)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }],
+        ['validate-pickupstarttime', 'Please enter a valid start time.', function(v) {
+            if(document.getElementById("ready_1").checked)
+            {
+                if(v === '')
+                {
+                    return false;
+                }
+            }
+            return true;
+        }],
+        ['validate-pickupclosetime', 'Please enter a valid end time.', function(v) {
+            if(document.getElementById("ready_1").checked)
+            {
+                if(v === '')
+                {
+                    return false;
+                }
+            }
+            return true;
+        }]
+    ]);
+    function calendervalidate(){
+        var date = document.getElementById('ready_date').value;
+        var splitDate = date.split('-');
+        var month = new Array();
+        month['01'] = 'January';
+        month['02'] = 'February';
+        month['03'] = 'March';
+        month['04'] = 'April';
+        month['05'] = 'May';
+        month['06'] = 'June';
+        month['07'] = 'July';
+        month['08'] = 'August';
+        month['09'] = 'September';
+        month['10'] = 'October';
+        month['11'] = 'November';
+        month['12'] = 'December';
+        dString = month[splitDate[1]]+', '+splitDate[0]+', '+splitDate[2];
+        var d2 = new Date(dString);
+        var d1 = new Date();
+        var t2 = d2.getTime();
+        var t1 = d1.getTime();
+        var result = parseInt((t2-t1)/(3600*1000));
+        if(result<0){
+            alert("Today's pickup cutoff time is already passed, select future date for pick up");
+            document.getElementById('ready_date').value='';
+            return false;
+        }
+    }
+    function createclosetime(){
+        var starttime = document.getElementById('pickupstarttime').value;
+        var closetime = parseInt(starttime, 10) + parseInt(200, 10);
+        document.getElementById('pickupclosetime').value = closetime;
+    }
+
+    function checkTimeDifference(){
+        var str = parseInt(document.getElementById('pickupstarttime').value);
+        // str = str.split(":");
+
+        var str2 = parseInt(document.getElementById('pickupclosetime').value);
+
+        var timediff = parseInt(str2-str)/100;
+
+        if(timediff < 2){
+            alert("Pick up needs minimum of 2 hours");
+            document.getElementById('pickupclosetime').value='';
+            return false;
+        }
+
+    }
+
+
+
+</script>

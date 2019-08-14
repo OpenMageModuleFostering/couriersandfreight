@@ -1,0 +1,317 @@
+<?php
+
+$_shipment = $this->getShipment();
+$orderid =$_shipment->getOrderId();
+$order = Mage::getModel('sales/order')->load($orderid);
+
+
+
+
+$getshippingmethod = $order->getShippingMethod();
+
+$shippingmethod = substr($getshippingmethod,21);
+$customshippinggetmodel = Mage::getModel('customshipping/shipment')->getCollection()
+    ->addFieldToFilter('order_id',$orderid);
+
+
+foreach($customshippinggetmodel as $coll)
+{
+    $shipmenttableid = $coll['id'];
+}
+$customshippingmodel = Mage::getModel('customshipping/shipment')->load($shipmenttableid);
+
+if($customshippingmodel->getCarrierId() ==''){
+    $webservice = $this->getSoaprequest();
+}
+$webservice = $this->getSoaprequest();
+$customshippinggetmodel = Mage::getModel('customshipping/shipment')->getCollection()
+    ->addFieldToFilter('order_id',$orderid);
+
+
+$adminselectedshipment = Mage::getModel('customshipping/shipmenthistory')->getCollection()
+    ->addFieldToFilter('order_id',$orderid);
+
+foreach($adminselectedshipment as $adminselected){
+    $getbookingnumber = $adminselected->getBookingNumber();
+}
+
+foreach($customshippinggetmodel as $coll)
+{
+    $Readydate = $customshippingmodel->getReadyDate();
+    $newrequestquote = $customshippingmodel->getPickupStart();
+}
+
+$this->settings = Mage::helper('customshipping/customshipping')->loadConfig();
+$candconfig = Mage::getStoreConfig('candf');
+
+
+$_shipment = $this->getShipment();
+$orderid = $_shipment->getOrderId();
+$bval = $this->getShipment()->creditLimitExceeded(16.8800);
+
+
+//checking user selected additional servicess
+
+
+$collection = Mage::getModel('customshipping/shipmentadditional')->getCollection();
+$getAdditionalServiceData= $collection->addFieldToFilter('order_id', array('in' =>array('in' => array($orderid))))->getData();
+
+
+
+?>
+
+
+<div class="entry-edit">
+    <div class="entry-edit-head">
+        <h4><?php echo $this->__('Available Quotes'); ?></h4>
+    </div>
+</div>
+<div class="grid np">
+    <div class="hor-scroll">
+        <table cellspacing="0" class="box np">
+            <col style="width: 40px;" />
+            <col style="width: 80px;" />
+            <col style="width: 30px;" />
+            <col style="width: 30px;" />
+            <col style="width: 40px;" />
+            <col style="width: 20px;" />
+            <thead>
+            <tr class="headings">
+                <th class="a-center"><?php echo $this->__('Carrier'); ?></th>
+                <th class="a-center"><?php echo $this->__('Delivery Method'); ?></th>
+                <th class="a-center"><?php echo $this->__('ETA'); ?></th>
+                <th class="a-center"><?php echo $this->__('Cost'); ?></th>
+                <?php if ($this->getShipment()->getStatus() != Candf_Customshipping_Model_System_Config_Backend_Shipment_Status::BOOKED){ ?>
+                    <th class="a-center"><?php echo $this->__('Notes'); ?></th>
+                    <th class="a-center"> </th>
+                <?php } else if($this->getShipment()->getStatus() == Candf_Customshipping_Model_System_Config_Backend_Shipment_Status::BOOKED){ ?>
+                    <th class="a-center"><?php echo $this->__('Status'); ?></th>
+                    <th class="a-center"><?php echo $this->__('Booking Number'); ?></th>
+                <?php } ?>
+            </tr>
+            </thead>
+            <tbody>
+            <?php
+            $_i = 0;
+            foreach($customshippinggetmodel as $coll)
+            {
+                $carriernamefull = explode('_',$coll['carrier_name']);
+                $price = $coll['shipping_cost']+$coll['markup_cost'];
+                if ($this->getShipment()->getStatus() != Candf_Customshipping_Model_System_Config_Backend_Shipment_Status::BOOKED)
+                {
+                    ?>
+                    <tr class="<?php echo ++$_i % 2 ? 'odd' : 'even'; ?>">
+                        <td><?php echo $carriernamefull[0]; ?></td>
+                        <td><?php echo $coll['service_name']; ?></td>
+                        <td><?php echo $coll['eta']; ?></td>
+                        <td><?php echo "AUD $".$price; ?></td>
+                        <td><?php if($shippingmethod == $coll['carrier_name']){ echo "Customer Selected"; }?></td>
+                        <?php
+                        $getstarttime = $this->getShipment()->getPickupstarttime();
+
+                        if($getstarttime == ''){
+                            ?>
+                            <td>Fill All Shipment Details</td>
+                        <?php
+                        } else{
+                            // $bVal = $this->getShipment()->hasCutOffPassedforToday();
+
+                            if(!$bval){
+                                ?>
+                                <td>you have exceeded your credit limit.</td>
+                            <?php
+                            }else{
+
+
+                                if($customshippingmodel->getReadyDate() == ''){ ?>
+                                    <td class="last"><a href="<?php echo $this->getUrl('*/*/validatebook', array('shipment' => $this->getShipment()->getId(), 'quote' => $coll['carrier_id'])); ?>"><?php echo "Make Booking"; ?></a></td>
+                                <?php } else { ?>
+                                    <td class="last"><a href="<?php echo $this->getUrl('*/*/book', array('shipment' => $this->getShipment()->getId(), 'quote' => $coll['carrier_id'])); ?>" ><?php echo "Make Booking"; ?></a></td>
+                                <?php } ?>
+                            <?php	} }	?>
+
+                    </tr>
+                <?php } else if($this->getShipment()->getStatus() == Candf_Customshipping_Model_System_Config_Backend_Shipment_Status::BOOKED){ ?>
+                    <tr class="<?php echo ++$_i % 2 ? 'odd' : 'even'; ?>">
+                        <td><?php echo $carriernamefull[0]; ?></td>
+                        <td><?php echo $coll['service_name']; ?></td>
+                        <td><?php echo $coll['eta']; ?></td>
+                        <td><?php echo "AUD $".$price; ?></td>
+                        <td><?php
+
+                            if($coll['booking_number'] != ''){ echo "Booked"; } else { echo "Customer Selected"; }?></td>
+                        <td class="last">
+                            <?php if($coll['booking_number'] != ''){ echo $bookingnumber = $coll['booking_number']; } else { echo "Not Booked"; }  ?>
+                        </td>
+                    </tr>
+                <?php } ?>
+            <?php } ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<?php if($newrequestquote == 1){
+    $webservice = $this->getSoaprequest();
+    ?>
+    <div class="entry-edit">
+        <div class="entry-edit-head">
+            <h4><?php echo $this->__('Requesed Quotes'); ?></h4>
+        </div>
+    </div>
+    <div class="grid np">
+        <div class="hor-scroll">
+            <table cellspacing="0" class="box np">
+                <col style="width: 40px;" />
+                <col style="width: 80px;" />
+                <col style="width: 30px;" />
+                <col style="width: 30px;" />
+                <col style="width: 40px;" />
+                <col style="width: 20px;" />
+                <thead>
+                <tr class="headings">
+                    <th class="a-center"><?php echo $this->__('Carrier'); ?></th>
+                    <th class="a-center"><?php echo $this->__('Delivery Method'); ?></th>
+                    <th class="a-center"><?php echo $this->__('ETA'); ?></th>
+                    <th class="a-center"><?php echo $this->__('Cost'); ?></th>
+                    <?php if ($this->getShipment()->getStatus() != Candf_Customshipping_Model_System_Config_Backend_Shipment_Status::BOOKED){ ?>
+                        <th class="a-center"><?php echo $this->__('Notes'); ?></th>
+                        <th class="a-center"> </th>
+                    <?php } else if($this->getShipment()->getStatus() == Candf_Customshipping_Model_System_Config_Backend_Shipment_Status::BOOKED){ ?>
+                        <th class="a-center"><?php echo $this->__('Status'); ?></th>
+                        <th class="a-center"><?php echo $this->__('Booking Number'); ?></th>
+                    <?php } ?>
+                </tr>
+                </thead>
+                <tbody class="cnadf-quote-list">
+
+                <tr>
+                    <td colspan="6" class="additionalser" ><div>
+                                <div class="backend-available-additional-servicess">
+
+                                </div>
+                    </td>
+                </tr>
+
+                <?php
+                $methodcount = $candconfig['markup']['shippingmethod_count'];
+                $_i = 0;
+                if ($this->getShipment()->getStatus() != Candf_Customshipping_Model_System_Config_Backend_Shipment_Status::BOOKED)
+                {
+                    for($i = 0; $i<$methodcount; $i++) {
+                        $requestprice = $webservice->RateResult->RateCollection->Rate[$i]->CurrencyValue;
+
+                        if($candconfig['markup']['markup_type'] == 'rate')
+                        {
+                            $markup = $candconfig['markup']['markup_price'];
+                        } else if($candconfig['markup']['markup_type'] == 'percentage')
+                        {
+                            $markuppercent = $candconfig['markup']['markup_price'];
+                            $markup = ($markuppercent/100)*$requestprice;
+                        }
+                        $servicename = $webservice->RateResult->RateCollection->Rate[$i]->ServiceName;
+                        $carriertitle = $webservice->RateResult->RateCollection->Rate[$i]->CarrierName;
+                        $eta = $webservice->RateResult->RateCollection->Rate[$i]->EtaText;
+                        $carrierid = $webservice->RateResult->RateCollection->Rate[$i]->CarrierId;
+                        $serviceid = $webservice->RateResult->RateCollection->Rate[$i]->ServiceId;
+                        //$carriertitle .= " ( ".$servicename." )";
+                        $price = $markup+$requestprice;
+                        ?>
+                        <tr class="<?php echo ++$_i % 2 ? 'odd' : 'even'; ?>">
+                            <td><?php echo $carriertitle; ?></td>
+                            <td><?php echo $servicename; ?></td>
+                            <td><?php echo $eta; ?></td>
+                            <td><?php echo "AUD $".$price; ?></td>
+                            <td><?php echo "New Quotes"; ?></td>
+                            <?php
+                            if(!$bval){
+                                ?>
+                                <td>you have exceeded your credit limit.</td>
+                            <?php
+                            }else{
+
+                                ?>
+
+                                <?php if($Readydate == ''){ ?>
+                                    <td class="last"><a href="<?php echo $this->getUrl('*/*/validatebook', array('shipment' => $this->getShipment()->getId(), 'carrierid' => $carrierid, 'serviceid' => $serviceid, 'cost' => $requestprice, 'carriername' => $carriertitle.'_'.$servicename, 'eta' => $eta)); ?>"><?php echo "Make Booking"; ?></a></td>
+                                <?php } else {
+
+                                        if(!empty($getAdditionalServiceData['0']['additional_shipment_id'])) {
+                                            $additionalserviceId = $getAdditionalServiceData['0']['additional_shipment_id'];
+                                            ?>
+
+                                            <td class="last get-bookingwith-addtionalservicess"><a href="<?php echo $this->getUrl('*/*/book', array('shipment' => $this->getShipment()->getId(), 'carrierid' => $carrierid, 'serviceid' => $serviceid, 'cost' => $requestprice, 'carriername' => $carriertitle.'_'.$servicename, 'eta' => $eta)); ?>" ><?php echo "Make Booking"; ?></a></td>
+
+                                        <?php
+                                        }elseif(empty($getAdditionalServiceData)){
+                                    ?>
+                                    <td class="last"><a href="<?php echo $this->getUrl('*/*/book', array('shipment' => $this->getShipment()->getId(), 'carrierid' => $carrierid, 'serviceid' => $serviceid, 'cost' => $requestprice, 'carriername' => $carriertitle.'_'.$servicename, 'eta' => $eta)); ?>" ><?php echo "Make Booking"; ?></a></td>
+                                <?php }}
+                            }
+                            ?>
+                            <!--<td class="last"><a href="<?php echo $this->getUrl('*/*/save', array('carrierid' => $carrierid, 'servicename' => $servicename)); ?>" ><?php echo "Select Quote"; ?></a></td>-->
+                        </tr>
+                    <?php } ?>
+                <?php } else if($this->getShipment()->getStatus() == Candf_Customshipping_Model_System_Config_Backend_Shipment_Status::BOOKED){
+                    foreach($adminselectedshipment as $coll)
+                    { $fullprice = $coll['shipping_cost']+$coll['markup_cost'];?>
+                        <tr class="<?php echo ++$_i % 2 ? 'odd' : 'even'; ?>">
+                            <td><?php echo $coll['carrier_name']; ?></td>
+                            <td><?php echo $coll['service_name']; ?></td>
+                            <td><?php echo $coll['eta']; ?></td>
+                            <td><?php echo "AUD $".$fullprice; ?></td>
+                            <td><?php echo $coll['notes']; ?></td>
+                            <td class="last"><?php echo $coll['booking_number']; ?></td>
+                        </tr>
+                    <?php } }?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+<?php } ?>
+
+<script src="http://code.jquery.com/jquery-1.7.1.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+    $.noConflict();
+    (function( $ ) {
+        $(function() {
+            $('.available-additional-servicess button').each(function() {
+
+                $(this).click(function() {
+                    var getclass = $(this).attr("class");
+                    var CarrierId = getclass.split(' ')[0];
+                    $.ajax({
+                        type: "POST",
+                        url: "<?php echo $this->getUrl('customshipping/cnfcart/getAdditionalServiceList') ?>",
+                        data: { 'CarrierId' : CarrierId },
+                        dataType: 'html',
+                        success: function(data){
+                             $(".backend-available-additional-servicess").html(data);
+                        }
+                    });
+
+                    $(this).parent().hide();
+                    $(this).parent().next().show();
+
+                });
+            });
+
+//            $(".additionalser backend-additional").click(function() {
+//                alert("ghghgh");
+//            });
+
+
+//            $(".additionalser input").each(function() {
+//                $(this).on(function() {
+//                    //var getId = $(this).attr("id");
+//                    alert("uuuuu");
+//                    //alert(getId);
+//                });
+//            });
+
+
+        });
+    })(jQuery);
+
+</script>

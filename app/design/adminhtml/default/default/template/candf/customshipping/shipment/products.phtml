@@ -1,0 +1,418 @@
+<?php
+$_shipment = $this->getShipment();
+$orderid = $_shipment->getOrderId();
+$customshippingorder = Mage::getModel('customshipping/order')->getCollection()
+    ->addFieldToFilter('order_id', $orderid);
+$settings = Mage::helper('customshipping/customshipping')->loadConfig();
+$candconfig = Mage::getStoreConfig('candf');
+
+
+
+?>
+<div class="entry-edit">
+    <div class="entry-edit-head">
+        <h4><?php echo $this->__('Items Ordered'); ?></h4>
+    </div>
+</div>
+<div class="grid np">
+    <div class="hor-scroll">
+        <table cellspacing="0" class="box np">
+            <col />
+            <col style="width: 100px;" />
+            <col style="width: 40px;" />
+            <col style="width: 70px;" />
+            <col style="width: 70px;" />
+            <col style="width: 70px;" />
+            <col style="width: 70px;" />
+            <thead>
+            <tr class="headings">
+                <td colspan="4" style="visibility:hidden;"></td>
+                <th colspan="4" class="a-center last"><?php echo $this->__('Dimensions'); ?></th>
+            </tr>
+            <tr class="headings">
+                <th width="20%"><?php echo $this->__('Product'); ?></th>
+                <th width="20%"><?php echo $this->__('Type'); ?></th>
+                <th width="10%"><?php echo $this->__('Paper'); ?></th>
+                <th width="10%"><?php echo $this->__('SKU'); ?></th>
+                <th class="a-center" width="10%"><?php echo $this->__('Qty'); ?></th>
+                <th class="a-center" width="10%"><?php echo $this->__('Weight('.$settings['weight'].')'); ?></th>
+                <th class="a-center" width="10%"><?php echo $this->__('Length('.$settings['measure'].')'); ?></th>
+                <th class="a-center last" width="10%"><?php echo $this->__('Width('.$settings['measure'].')'); ?></th>
+                <th class="a-center" width="10%"><?php echo $this->__('Height('.$settings['measure'].')'); ?></th>
+            </tr>
+            </thead>
+            <?php
+
+
+            $_i = 0;
+
+
+
+            foreach ($customshippingorder as $coll): ?>
+<?php
+
+                $proId = $coll['id'];
+                $qty = $coll['qty'];
+                $sku = $coll['product_sku'];
+
+                $_product = Mage::getModel('catalog/product')->loadByAttribute('sku', $sku);
+                $length = $_product->getResource()->getAttribute('candf_length')->getFrontend()->getValue($_product);
+                $height = $_product->getResource()->getAttribute('candf_height')->getFrontend()->getValue($_product);
+                $width = $_product->getResource()->getAttribute('candf_width')->getFrontend()->getValue($_product);
+                $weight = $_product->getResource()->getAttribute('weight')->getFrontend()->getValue($_product);
+
+                $proLenght = $length;
+                $proHeight =$height;
+                $proWidth = $width;
+                $proWeight = $weight;
+                $proQty = $qty;
+
+                $meterRate = $_product->getResource()->getAttribute('candf_meter_rate')->getFrontend()->getValue($_product);
+                $packagedLength  = $_product->getResource()->getAttribute('candf_packaged_length')->getFrontend()->getValue($_product);
+
+                if(($meterRate== 'Yes') && (bool)$packagedLength) {
+                    $floatLength = floatval($packagedLength);
+                    $packageWeight = ($floatLength*$weight)/$length;
+                    $how_many_parts_make_up_one_product = $floatLength /floatval($length);
+                    $length = $floatLength;
+                    $packageQty = $qty/$how_many_parts_make_up_one_product;
+                    $fullPackagesQty = floor($packageQty);
+                    $decimalVal = $packageQty - $fullPackagesQty;
+                    $additionalQty = round(($packagedLength * $decimalVal)/$proLenght);
+
+                    $weight = $packageWeight;
+                    $k = 0;
+                    $k2 = 0;
+
+                    if($packageQty < 1) {
+                        $length =$proLenght;
+                        $height = $proHeight;
+                        $width = $proWidth;
+                        $weight = $proWeight;
+                        $qty = $proQty;
+                    }
+                }
+
+                for ($c = 1; $c <= $qty; $c++) {
+                    $parcel[$k]->Height = $height;
+                    $parcel[$k]->Length = $length;
+                    $parcel[$k]->Width = $width;
+                    $parcel[$k]->Weight = $weight;
+                    $k++;
+                }
+
+                if(!empty($additionalQty)) {
+                    for ($c = 1; $c <= $additionalQty; $c++) {
+                        $aditional_parcel[$k2]->Height = $proHeight;
+                        $aditional_parcel[$k2]->Length = $proLenght;
+                        $aditional_parcel[$k2]->Width = $proWidth;
+                        $aditional_parcel[$k2]->Weight = $proWeight;
+                        $k2++;
+                    }
+                }
+                ?>
+                <tbody>
+
+                <?php
+
+                if(!empty($fullPackagesQty)) {
+                    foreach($parcel as $parcelArr) {
+                        $Height = $parcelArr->Height;
+                        $Length = $parcelArr->Length;
+                        $Width = $parcelArr->Width;
+                        $Weight = $parcelArr->Weight;
+                        $qty = $fullPackagesQty;
+                    }?>
+
+                        <tr class="<?php echo++$_i % 2 ? 'odd' : 'even'; ?>">
+                            <input type="hidden" name="id[]" id="id[]" value="<?php echo $coll['id']; ?>"  />
+                            <td><?php
+                                echo 'Package---'. $coll['product_name'];
+                                ?>
+                            </td>
+                            <td>
+                                <?php
+                                ?>
+                                <select name="type[]" id="type[]" style="width:160px;">
+                                    <?php
+                                    $arrOptions = array(
+                                        2 => "BOX",
+                                        11 => "ANY",
+                                        1 => "BAG",
+                                        3 => "CARTON",
+                                        4 => "CRATE",
+                                        5 => "DRUM",
+                                        6 => "ENVELOPE",
+                                        19 => "PACKAGE",
+                                        7 => "PALLET",
+                                        18 => "PARCEL",
+                                        17 => "PIECES",
+                                        15 => "POSTER TUBE",
+                                        8 => "ROLL",
+                                        9 => "SATCHELS",
+                                        16 => "SKID"
+                                    );
+
+                                    foreach ($arrOptions as $keyo => $valueo) {
+                                        $selected = "";
+                                        if($coll['type']==$keyo){
+                                            $selected = "selected=selected";
+                                        }
+                                        elseif ($settings['packagetype'] == $keyo) {
+                                            $selected = "selected=selected";
+                                        }
+                                        echo "<option value=" . $keyo . " " . $selected . ">" . ucwords(strtolower($valueo)) . "</option>";
+                                    }
+                                    ?>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="paper[]" id="paper[]" style="width:160px;">
+                                    <?php
+                                    $paperOptions = array(
+                                        1 => "Plain",
+                                        2 => "Thermal"
+                                    );
+
+                                    foreach ($paperOptions as $keyo => $valueo) {
+                                        $selected = "";
+                                        if($coll['type']==$keyo){
+                                            $selected = "selected=selected";
+                                        }
+                                        elseif ($settings['packagetype'] == $keyo) {
+                                            $selected = "selected=selected";
+                                        }
+                                        echo "<option value=" . $keyo . " " . $selected . ">" . ucwords(strtolower($valueo)) . "</option>";
+                                    }
+                                    ?>
+                                </select>
+                            </td>
+                            <td><?php echo  $coll['product_sku']; ?></td>
+                            <td><?php echo $fullPackagesQty; ?></td>
+                            <?php if ($_shipment->getStatus() == Candf_Customshipping_Model_System_Config_Backend_Shipment_Status::PENDING) { ?>
+                                <td><input type="text" name="weight[]" id="weight[]" value="<?php echo $Weight; ?>" style="width:70px;" class="required-entry validate-greater-than-zero"  /></td>
+                            <?php } else { ?>
+                                <td><?php echo $Weight; ?></td>
+                            <?php } ?>
+                            <?php if ($_shipment->getStatus() == Candf_Customshipping_Model_System_Config_Backend_Shipment_Status::PENDING) { ?>
+                                <td><input type="text" name="length[]" id="length[]" value="<?php echo $Length; ?>" style="width:70px;" class="required-entry validate-greater-than-zero"  /></td>
+                            <?php } else { ?>
+                                <td><?php echo $Length; ?></td>
+                            <?php } ?>
+                            <?php if ($_shipment->getStatus() == Candf_Customshipping_Model_System_Config_Backend_Shipment_Status::PENDING) { ?>
+                                <td class="last"><input type="text" name="width[]" id="width[]" value="<?php echo $Width; ?>" style="width:70px;" class="required-entry validate-greater-than-zero" /></td>
+                                <input type="hidden" name="requestquote" id="requestquote" value="1" />
+                            <?php } else { ?>
+                                <td><?php echo $Width; ?></td>
+                            <?php } ?>
+                            <?php if ($_shipment->getStatus() == Candf_Customshipping_Model_System_Config_Backend_Shipment_Status::PENDING) { ?>
+                                <td><input type="text" name="height[]" id="height[]" value="<?php echo $Height; ?>" style="width:70px;" class="required-entry validate-greater-than-zero" /></td>
+                            <?php } else { ?>
+                                <td><?php echo $Height; ?></td>
+                            <?php } ?>
+                        </tr>
+
+                    <?php
+
+
+                }
+                if(!empty($additionalQty)) {
+                    foreach($aditional_parcel as $aditionalProduct) {
+                        $Height = $aditionalProduct->Height;
+                        $Length = $aditionalProduct->Length;
+                        $Width = $aditionalProduct->Width;
+                        $Weight = $aditionalProduct->Weight;
+                        $qty = $additionalQty;
+                    }
+                    ?>
+                    <tr class="<?php echo++$_i % 2 ? 'odd' : 'even'; ?>">
+                        <input type="hidden" name="id[]" id="id[]" value="<?php echo $coll['id']; ?>"  />
+                        <td><?php
+                            echo $coll['product_name'];
+                            ?>
+                        </td>
+                        <td>
+                            <?php
+                            ?>
+                            <select name="type[]" id="type[]" style="width:160px;">
+                                <?php
+                                $arrOptions = array(
+                                    2 => "BOX",
+                                    11 => "ANY",
+                                    1 => "BAG",
+                                    3 => "CARTON",
+                                    4 => "CRATE",
+                                    5 => "DRUM",
+                                    6 => "ENVELOPE",
+                                    19 => "PACKAGE",
+                                    7 => "PALLET",
+                                    18 => "PARCEL",
+                                    17 => "PIECES",
+                                    15 => "POSTER TUBE",
+                                    8 => "ROLL",
+                                    9 => "SATCHELS",
+                                    16 => "SKID"
+                                );
+
+                                foreach ($arrOptions as $keyo => $valueo) {
+                                    $selected = "";
+                                    if($coll['type']==$keyo){
+                                        $selected = "selected=selected";
+                                    }
+                                    elseif ($settings['packagetype'] == $keyo) {
+                                        $selected = "selected=selected";
+                                    }
+                                    echo "<option value=" . $keyo . " " . $selected . ">" . ucwords(strtolower($valueo)) . "</option>";
+                                }
+                                ?>
+                            </select>
+                        </td>
+                        <td>
+                            <select name="paper[]" id="paper[]" style="width:160px;">
+                                <?php
+                                $paperOptions = array(
+                                    1 => "Plain",
+                                    2 => "Thermal"
+                                );
+
+                                foreach ($paperOptions as $keyo => $valueo) {
+                                    $selected = "";
+                                    if($coll['type']==$keyo){
+                                        $selected = "selected=selected";
+                                    }
+                                    elseif ($settings['packagetype'] == $keyo) {
+                                        $selected = "selected=selected";
+                                    }
+                                    echo "<option value=" . $keyo . " " . $selected . ">" . ucwords(strtolower($valueo)) . "</option>";
+                                }
+                                ?>
+                            </select>
+                        </td>
+                        <td><?php echo $coll['product_sku']; ?></td>
+                        <td><?php echo $additionalQty; ?></td>
+                        <?php if ($_shipment->getStatus() == Candf_Customshipping_Model_System_Config_Backend_Shipment_Status::PENDING) { ?>
+                            <td><input type="text" name="weight[]" id="weight[]" value="<?php echo $Weight; ?>" style="width:70px;" class="required-entry validate-greater-than-zero"  /></td>
+                        <?php } else { ?>
+                            <td><?php echo $Weight; ?></td>
+                        <?php } ?>
+                        <?php if ($_shipment->getStatus() == Candf_Customshipping_Model_System_Config_Backend_Shipment_Status::PENDING) { ?>
+                            <td><input type="text" name="length[]" id="length[]" value="<?php echo $Length; ?>" style="width:70px;" class="required-entry validate-greater-than-zero"  /></td>
+                        <?php } else { ?>
+                            <td><?php echo $Length; ?></td>
+                        <?php } ?>
+                        <?php if ($_shipment->getStatus() == Candf_Customshipping_Model_System_Config_Backend_Shipment_Status::PENDING) { ?>
+                            <td class="last"><input type="text" name="width[]" id="width[]" value="<?php echo $Width; ?>" style="width:70px;" class="required-entry validate-greater-than-zero" /></td>
+                            <input type="hidden" name="requestquote" id="requestquote" value="1" />
+                        <?php } else { ?>
+                            <td><?php echo $Width; ?></td>
+                        <?php } ?>
+                        <?php if ($_shipment->getStatus() == Candf_Customshipping_Model_System_Config_Backend_Shipment_Status::PENDING) { ?>
+                            <td><input type="text" name="height[]" id="height[]" value="<?php echo $Height; ?>" style="width:70px;" class="required-entry validate-greater-than-zero" /></td>
+                        <?php } else { ?>
+                            <td><?php echo $Height; ?></td>
+                        <?php } ?>
+                    </tr>
+
+                <?php
+
+                }
+                if($meterRate == 'No') {
+                ?>
+                <tr class="<?php echo++$_i % 2 ? 'odd' : 'even'; ?>">
+                    <input type="hidden" name="id[]" id="id[]" value="<?php echo $coll['id']; ?>"  />
+                    <td><?php
+                        echo $coll['product_name'];
+                        ?>
+                    </td>
+                    <td>
+                        <?php
+                        ?>
+                        <select name="type[]" id="type[]" style="width:160px;">
+                            <?php
+                            $arrOptions = array(
+                                2 => "BOX",
+                                11 => "ANY",
+                                1 => "BAG",
+                                3 => "CARTON",
+                                4 => "CRATE",
+                                5 => "DRUM",
+                                6 => "ENVELOPE",
+                                19 => "PACKAGE",
+                                7 => "PALLET",
+                                18 => "PARCEL",
+                                17 => "PIECES",
+                                15 => "POSTER TUBE",
+                                8 => "ROLL",
+                                9 => "SATCHELS",
+                                16 => "SKID"
+                            );
+
+                            foreach ($arrOptions as $keyo => $valueo) {
+                                $selected = "";
+                                if($coll['type']==$keyo){
+                                    $selected = "selected=selected";
+                                }
+                                elseif ($settings['packagetype'] == $keyo) {
+                                    $selected = "selected=selected";
+                                }
+                                echo "<option value=" . $keyo . " " . $selected . ">" . ucwords(strtolower($valueo)) . "</option>";
+                            }
+                            ?>
+                        </select>
+                    </td>
+                    <td>
+                        <select name="paper[]" id="paper[]" style="width:160px;">
+                            <?php
+                            $paperOptions = array(
+                                1 => "Plain",
+                                2 => "Thermal"
+                            );
+
+                            foreach ($paperOptions as $keyo => $valueo) {
+                                $selected = "";
+                                if($coll['type']==$keyo){
+                                    $selected = "selected=selected";
+                                }
+                                elseif ($settings['packagetype'] == $keyo) {
+                                    $selected = "selected=selected";
+                                }
+                                echo "<option value=" . $keyo . " " . $selected . ">" . ucwords(strtolower($valueo)) . "</option>";
+                            }
+                            ?>
+                        </select>
+                    </td>
+                    <td><?php echo $coll['product_sku']; ?></td>
+                    <td><?php echo $coll['qty']; ?></td>
+                    <?php if ($_shipment->getStatus() == Candf_Customshipping_Model_System_Config_Backend_Shipment_Status::PENDING) { ?>
+                        <td><input type="text" name="weight[]" id="weight[]" value="<?php echo $coll['weight']; ?>" style="width:70px;" class="required-entry validate-greater-than-zero"  /></td>
+                    <?php } else { ?>
+                        <td><?php echo $coll['weight']; ?></td>
+                    <?php } ?>
+                    <?php if ($_shipment->getStatus() == Candf_Customshipping_Model_System_Config_Backend_Shipment_Status::PENDING) { ?>
+                        <td><input type="text" name="length[]" id="length[]" value="<?php echo $coll['length']; ?>" style="width:70px;" class="required-entry validate-greater-than-zero"  /></td>
+                    <?php } else { ?>
+                        <td><?php echo $coll['length']; ?></td>
+                    <?php } ?>
+                    <?php if ($_shipment->getStatus() == Candf_Customshipping_Model_System_Config_Backend_Shipment_Status::PENDING) { ?>
+                        <td class="last"><input type="text" name="width[]" id="width[]" value="<?php echo $coll['width']; ?>" style="width:70px;" class="required-entry validate-greater-than-zero" /></td>
+                        <input type="hidden" name="requestquote" id="requestquote" value="1" />
+                    <?php } else { ?>
+                        <td><?php echo $coll['width']; ?></td>
+                    <?php } ?>
+                    <?php if ($_shipment->getStatus() == Candf_Customshipping_Model_System_Config_Backend_Shipment_Status::PENDING) { ?>
+                        <td><input type="text" name="height[]" id="height[]" value="<?php echo $coll['height']; ?>" style="width:70px;" class="required-entry validate-greater-than-zero" /></td>
+                    <?php } else { ?>
+                        <td><?php echo $coll['height']; ?></td>
+                    <?php } ?>
+                </tr>
+                <?php } ?>
+                </tbody>
+            <?php endforeach; ?>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+    function newquote() {
+        document.getElementById('requestquote').value = 1;
+    }
+</script>

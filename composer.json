@@ -1,0 +1,16 @@
+{
+    "name": "OpenMageModuleFostering/couriersandfreight",
+    "type": "magento-module",
+    "license": "OSL-3.0",
+    "homepage": "",
+    "description": "Couriers and Freight Shipping Extension Solution is fully fledged e-commerce Solutions Company offering range of services",
+    "authors": [
+    {
+        "name": "CN Global Pty Ltd",
+        "email": "candfshipping@couriersandfreight.net.au"
+    }
+],
+    "suggest": {
+        "magento-hackathon/magento-composer-installer": "*"
+    }
+}

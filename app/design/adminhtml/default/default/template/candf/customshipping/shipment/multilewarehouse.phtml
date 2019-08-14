@@ -1,0 +1,33 @@
+
+<form action="#" method="POST">
+<div class="entry-edit">
+    <div class="entry-edit-head">
+        <h4><?php echo $this->__('Origin Location'); ?></h4>
+    </div>
+    <div class="fieldset">
+        <table cellspacing="0" class="form-list">
+            <tr>
+                <td class="label"><label><?php echo $this->__('Warehouse'); ?></label></td>
+                <td class="value">
+                    <?php
+                    $warehouses = $this->getMultipleWarehouse();
+                    ?>
+                    <select id="warehouse_id" name="warehouse_id" style="width: 100%" onchange="multiplewarehouseIdChange()">
+                        <option value="0" selected="selected">-Please select-</option>
+                        <?php foreach($warehouses as $warehouse) : ?>
+                            <?php
+                            $locationName = $warehouse['name'];
+                            $zip = $warehouse['zip'];
+                            $suburb = $warehouse['suburb'];
+                            $state = $warehouse['state'];
+                            $warehouseId = $warehouse['warehouse_id'];
+                            $warehouseAdd = $locationName.'('.$zip.','.$suburb.','.$state.')';
+                            ?>
+                                <option value="<?php echo $warehouseId ?>" ><?php echo $warehouseAdd ?></option>
+                        <?php endforeach; ?>
+                    </select>
+            </tr>
+        </table>
+    </div>
+</div>
+</form>

@@ -1,0 +1,24 @@
+<?php
+$candconfig = Mage::getStoreConfig('candf');
+?>
+<div>
+    <div class="box-left">
+        <?php echo $this->getLayout()->createBlock('customshipping/adminhtml_shipment_edit_tab_form_status')->setTemplate('candf/customshipping/shipment/status.phtml')->toHtml(); ?>
+        <?php echo $this->getLayout()->createBlock('customshipping/adminhtml_shipment_edit_tab_form_pickup')->setTemplate('candf/customshipping/shipment/pickup.phtml')->toHtml(); ?>
+        <?php echo $this->getLayout()->createBlock('customshipping/adminhtml_shipment_edit_tab_form_warehouse')->setTemplate('candf/customshipping/shipment/multilewarehouse.phtml')->toHtml(); ?>
+    </div>
+    <div class="box-right">
+        <?php echo $this->getLayout()->createBlock('customshipping/adminhtml_shipment_edit_tab_form_destination')->setTemplate('candf/customshipping/shipment/destination.phtml')->toHtml(); ?>
+    </div>
+    <div class="clear"></div>
+
+<?php echo $this->getLayout()->createBlock('customshipping/adminhtml_shipment_edit_tab_form_availableboxes')->setTemplate('candf/customshipping/shipment/availableboxes.phtml')->toHtml(); ?>
+    <?php
+    if($candconfig['manualycreateboxes']['manualycreatstatus']==1) {
+    ?>
+    <?php echo $this->getLayout()->createBlock('customshipping/adminhtml_shipment_edit_tab_form_manualycreatebox')->setTemplate('candf/customshipping/shipment/manualy_create_box.phtml')->toHtml(); ?>
+    <?php } ?>
+    <?php echo $this->getLayout()->createBlock('customshipping/adminhtml_shipment_edit_tab_form_products')->setTemplate('candf/customshipping/shipment/products.phtml')->toHtml(); ?>
+    <?php  echo $this->getLayout()->createBlock('customshipping/adminhtml_shipment_edit_tab_form_quotes')->setTemplate('candf/customshipping/shipment/quotes.phtml')->toHtml(); ?>
+
+</div>

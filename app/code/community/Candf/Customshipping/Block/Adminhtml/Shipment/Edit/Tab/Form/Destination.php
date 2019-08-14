@@ -1,0 +1,8 @@
+<?php
+
+class Candf_Customshipping_Block_Adminhtml_Shipment_Edit_Tab_Form_Destination extends Candf_Customshipping_Block_Adminhtml_Shipment_Edit_Tab_Abstract
+{
+
+
+
+}

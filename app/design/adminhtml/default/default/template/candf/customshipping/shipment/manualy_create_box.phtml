@@ -1,0 +1,143 @@
+<?php
+
+$_shipment = $this->getShipment();
+$orderid = $_shipment->getOrderId();
+$customshippingorder = Mage::getModel('customshipping/order')->getCollection()
+    ->addFieldToFilter('order_id', $orderid);
+$settings = Mage::helper('customshipping/customshipping')->loadConfig();
+$candconfig = Mage::getStoreConfig('candf');
+?>
+
+<div class="entry-edit">
+    <div class="entry-edit-head">
+        <h4><?php echo 'Create boxes' ?></h4>
+    </div>
+</div>
+<div class="grid np">
+    <div class="fieldset hor-scroll">
+        <table cellspacing="0" class="box np">
+            <col />
+            <col style="width: 100px;" />
+            <col style="width: 40px;" />
+            <col style="width: 70px;" />
+            <col style="width: 70px;" />
+            <col style="width: 70px;" />
+            <col style="width: 70px;" />
+            <thead>
+            <tr class="headings">
+                <td colspan="4" style="visibility:hidden;"></td>
+                <th colspan="4" class="a-center last"><?php echo 'Dimensions' ?></th>
+            </tr>
+            <tr class="headings">
+                <th width="20%"><?php echo 'Box Name'?></th>
+                <th width="20%"><?php echo 'Type' ?></th>
+                <th width="10%"><?php echo 'Paper' ?></th>
+                <th class="a-center" width="10%"><?php echo 'Qty' ?></th>
+                <th class="a-center" width="10%"><?php echo 'Weight' ?></th>
+                <th class="a-center" width="10%"><?php echo 'Length' ?></th>
+                <th class="a-center last" width="10%"><?php echo 'Width' ?></th>
+                <th class="a-center" width="10%"><?php echo 'Height' ?></th>
+            </tr>
+            </thead>
+            <tbody>
+                <?php
+                $boxArray = array(
+                    1 => "BOX-1",
+                    2 => "BOX-2",
+                    3 => "BOX-3",
+                    4 => "BOX-4",
+                    5 => "BOX-5",
+                    6 => "BOX-6",
+                    7 => "BOX-7",
+                    8 => "BOX-8",
+                    9 => "BOX-9",
+                    10 => "BOX-10",
+                    11 => "BOX-11",
+                    12 => "BOX-12",
+                    13=> "BOX-13",
+                    14=> "BOX-14",
+                    15 => "BOX-15"
+                );
+                foreach($boxArray as $key=>$boxes) {
+                    ?>
+                    <tr>
+                        <td><?php echo $boxes;?></td>
+                        <td>
+                            <?php
+                            ?>
+                            <select name="createmanualbox[box_set_<?php echo $key; ?>][type]" id="type[]" style="width:160px;">
+                                <?php
+                                $arrOptions = array(
+                                    2 => "BOX",
+                                    11 => "ANY",
+                                    1 => "BAG",
+                                    3 => "CARTON",
+                                    4 => "CRATE",
+                                    5 => "DRUM",
+                                    6 => "ENVELOPE",
+                                    19 => "PACKAGE",
+                                    7 => "PALLET",
+                                    18 => "PARCEL",
+                                    17 => "PIECES",
+                                    15 => "POSTER TUBE",
+                                    8 => "ROLL",
+                                    9 => "SATCHELS",
+                                    16 => "SKID"
+                                );
+
+                                foreach ($arrOptions as $keyo => $valueo) {
+                                    $selected = "";
+                                    if($coll['type']==$keyo){
+                                        $selected = "selected=selected";
+                                    }
+                                    elseif ($settings['packagetype'] == $keyo) {
+                                        $selected = "selected=selected";
+                                    }
+                                    echo "<option value=" . $keyo . " " . $selected . ">" . ucwords(strtolower($valueo)) . "</option>";
+                                }
+                                ?>
+                            </select>
+                        </td>
+                        <td>
+                            <select name="createmanualbox[box_set_<?php echo $key; ?>][paper]" id="paper[]" style="width:160px;">
+                                <?php
+                                $paperOptions = array(
+                                    1 => "Plain",
+                                    2 => "Thermal"
+                                );
+
+                                foreach ($paperOptions as $keyo => $valueo) {
+                                    $selected = "";
+                                    if($coll['type']==$keyo){
+                                        $selected = "selected=selected";
+                                    }
+                                    elseif ($settings['packagetype'] == $keyo) {
+                                        $selected = "selected=selected";
+                                    }
+                                    echo "<option value=" . $keyo . " " . $selected . ">" . ucwords(strtolower($valueo)) . "</option>";
+                                }
+                                ?>
+                            </select>
+                        </td>
+
+
+
+                            <?php
+                            echo ' <td>';
+                            echo '<div class="fieldset"><input type="text" name="createmanualbox[box_set_'.$key.'][gty]" id="boxgty[]" value="" style="width:70px;" class="validate-greater-than-zero"  /></div>';
+                            echo '</td>';
+                            echo '<td><div class="fieldset"><input type="text" name="createmanualbox[box_set_'.$key.'][weight]" id="weight[]" value="" style="width:70px;" class="validate-greater-than-zero"  /></div></td>';
+                            echo '<td><div class="fieldset"><input type="text" name="createmanualbox[box_set_'.$key.'][length]" id="length[]" value="" style="width:70px;" class="validate-greater-than-zero"  /></div></td>';
+                            echo '<td><div class="fieldset"><input type="text" name="createmanualbox[box_set_'.$key.'][width]" id="width[]" value="" style="width:70px;" class="validate-greater-than-zero" /></div></td>';
+                            echo '<td><div class="fieldset"><input type="text" name="createmanualbox[box_set_'.$key.'][height]" id="height[]" value="" style="width:70px;" class="validate-greater-than-zero" /></div></td>';
+                            ?>
+                    </tr>
+                <?php
+                }
+                echo '<input type="hidden" name="manualy_create_boxes" value="manualy_create_boxes">';
+                ?>
+            </tbody>
+
+        </table>
+    </div>
+</div>

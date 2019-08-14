@@ -1,0 +1,613 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <tabs>
+        <candf translate="label" module="customshipping">
+            <label>CandF Extensions</label>
+            <sort_order>100</sort_order>
+        </candf>
+    </tabs>
+    <sections>
+        <candf translate="label" module="customshipping">
+            <label>CandF Settings</label>
+            <tab>candf</tab>
+            <sort_order>1000</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
+            <groups>
+                <general translate="label" module="customshipping">
+                    <label>Configuration Settings</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>1000</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <active translate="label">
+                            <label>Enabled</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </active>
+                        <sandbox translate="label">
+                            <label>Sandbox</label>
+                            <frontend_type>select</frontend_type>
+                            <sort_order>2</sort_order>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment><![CDATA[If set to "Yes", the sandbox (testing) service will be used (usually set to "No" on a live site)]]></comment>
+                        </sandbox>
+                        <merchantid translate="label">
+                            <label>Merchant Id</label>
+                            <frontend_type>text</frontend_type>
+                            <frontend_model>customshipping/adminhtml_system_config_backend_form_field_required</frontend_model>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>required-entry</validate>
+                        </merchantid>
+                        <api translate="label">
+                            <label>Api Key</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <frontend_model>customshipping/adminhtml_system_config_backend_form_field_required</frontend_model>
+                            <validate>required-entry</validate>
+                        </api>
+                        <password translate="label">
+                            <label>Password</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <frontend_model>customshipping/adminhtml_system_config_backend_form_field_required</frontend_model>
+                            <validate>required-entry</validate>
+                        </password>
+                    </fields>
+                </general>
+                <countries translate="label" module="customshipping">
+                    <label>Country option</label>
+                    <front_type>text</front_type>
+                    <sort_order>1005</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_website>1</show_in_website>
+                    <fields>
+                        <sallowspecific translate="label">
+                            <label>Ship to applicable countries</label>
+                            <frontend_type>select</frontend_type>
+                            <sort_order>6</sort_order>
+                            <frontend_class>shipping-applicable-country</frontend_class>
+                            <source_model>adminhtml/system_config_source_shipping_allspecificcountries</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </sallowspecific>
+                        <specificcountry translate="label">
+                            <label>Ship to Specific countries</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <sort_order>7</sort_order>
+                            <source_model>adminhtml/system_config_source_country</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </specificcountry>
+                    </fields>
+                </countries>
+                <rule translate="label" module="customshipping">
+                    <label>Rule Engine</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>1010</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <rulestatus translate="label">
+                            <label>Enable</label>
+                            <frontend_type>select</frontend_type>
+                            <sort_order>1</sort_order>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>
+                                <![CDATA[
+                                                    <b>Yes</b> - You will be albe to add rules as follows <br/>
+                                                    <b>Dynamic Carriers</b><br/>
+                                                    - Preferable Carriers<br/>
+                                                    - Express Carriers<br/>
+                                                    - Sameday Carriers to Manage Shipments<br/>
+                                                    <b>Pricing</b><br/>
+                                                    - Free Shipping - no charge to customer.<br/>
+                                                    - Fixed Price / Flat Rate<br/>
+                                                    - Dynamic Pricing<br/>
+                                                        &nbsp;* All: All quotes from carriers in "allowed carriers" <br/>&nbsp;&nbsp;above are shown for the customer to choose from.<br/>
+                                                        &nbsp;* Cheapest: Only the cheapest quote is shown.<br/>
+                                                        &nbsp;* Fastest: Only the fastest quote is shown.<br/>
+                                                        &nbsp;* Cheapest and Fastest: The customer can choose<br/>&nbsp;&nbsp; between the cheapest or the fastest quote.<br/>
+                                                   <b>To access "rule engine"<br/>
+                                                     go to the navigation Candf -> Rule Engine</b>
+                                                ]]>
+                            </comment>
+                        </rulestatus>
+                    </fields>
+                </rule>
+                <insurance translate="label" module="customshipping">
+                    <label>Warranty</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>1015</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <status translate="label">
+                            <label>Warranty</label>
+                            <frontend_type>select</frontend_type>
+                            <sort_order>1</sort_order>
+                            <source_model>customshipping/System_Config_backend_Insurance</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>
+                                <![CDATA[
+                                                    Disabled - This option is unavailable to users.<br/>
+                                                    Optional - The option is presented during checkout.<br/>
+                                                    Mandatory - Warranty must be added to all orders.
+                                                ]]>
+                            </comment>
+                        </status>
+                        <insurance_markup translate="label">
+                            <label>Warranty Markup</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </insurance_markup>
+                    </fields>
+                </insurance>
+                <units translate="label" module="customshipping">
+                    <label>Units</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>1020</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <measure translate="label">
+                            <label>Measure Unit</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>customshipping/system_config_backend_unit_measure</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment><![CDATA[The units used for product measurements]]></comment>
+                        </measure>
+                        <weight translate="label">
+                            <label>Weight Unit</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>customshipping/system_config_backend_unit_weight</source_model>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment><![CDATA[The units used for product weights]]></comment>
+                        </weight>
+                    </fields>
+                </units>
+                <packaging translate="label" module="customshipping">
+                    <label>Packaging</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>1025</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <comment><![CDATA[<div style="padding:10px;background-color:#fff;border:1px solid #EA7601;margin-bottom:7px;">Default values will be used for all products that do not have product specific dimensions configured.</div>]]></comment>
+                    <fields>
+                        <packagetype translate="label">
+                            <label>Package Type</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>customshipping/System_Config_Backend_Packaging_Packagetype</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>35</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </packagetype>
+                        <length>
+                            <label>Length</label>
+                            <frontend_type>text</frontend_type>
+                            <frontend_model>customshipping/adminhtml_system_config_backend_form_field_required</frontend_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <validate>required-entry validate-number</validate>
+                        </length>
+                        <width>
+                            <label>Width</label>
+                            <frontend_type>text</frontend_type>
+                            <frontend_model>customshipping/adminhtml_system_config_backend_form_field_required</frontend_model>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <validate>required-entry validate-number</validate>
+                        </width>
+                        <height>
+                            <label>Height</label>
+                            <frontend_type>text</frontend_type>
+                            <frontend_model>customshipping/adminhtml_system_config_backend_form_field_required</frontend_model>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <validate>required-entry validate-number</validate>
+                            <comment><![CDATA[If unknown use 10x10x10]]></comment>
+                        </height>
+                    </fields>
+                </packaging>
+                <warehouse translate="label" module="customshipping">
+                    <label>Warehouse Address</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>1030</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <warehouse_companyname translate="label">
+                            <label>Company Name</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </warehouse_companyname>
+                        <warehouse_firstname translate="label">
+                            <label>First Name</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </warehouse_firstname>
+                        <warehouse_lastname translate="label">
+                            <label>Last Name</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </warehouse_lastname>
+                        <warehouse_adrs1 translate="label">
+                            <label>Street Address1</label>
+                            <frontend_type>text</frontend_type>
+                            <frontend_model>customshipping/adminhtml_system_config_backend_form_field_required</frontend_model>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>required-entry</validate>
+                        </warehouse_adrs1>
+                        <warehouse_adrs2 translate="label">
+                            <label>Street Address2</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>6</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </warehouse_adrs2>
+                        <warehouse_code translate="label">
+                            <label>Post Code</label>
+                            <frontend_type>text</frontend_type>
+                            <frontend_model>customshipping/adminhtml_system_config_backend_form_field_required</frontend_model>
+                            <sort_order>7</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>required-entry</validate>
+                        </warehouse_code>
+                        <warehouse_suburb translate="label">
+                            <label>Warehouse Suburb</label>
+                            <frontend_type>text</frontend_type>
+                            <frontend_model>customshipping/adminhtml_system_config_backend_form_field_required</frontend_model>
+                            <sort_order>8</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>required-entry</validate>
+                        </warehouse_suburb>
+                        <warehouse_state translate="label">
+                            <label>State</label>
+                            <frontend_type>text</frontend_type>
+                            <frontend_model>customshipping/adminhtml_system_config_backend_form_field_required</frontend_model>
+                            <sort_order>9</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>required-entry</validate>
+                        </warehouse_state>
+                        <warehouse_country translate="label">
+                            <label>Country</label>
+                            <frontend_type>select</frontend_type>
+                            <frontend_model>customshipping/adminhtml_system_config_backend_form_field_required</frontend_model>
+                            <sort_order>10</sort_order>
+                            <source_model>adminhtml/system_config_source_country</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </warehouse_country>
+                        <warehouse_email translate="label">
+                            <label>Email</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>11</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-email</validate>
+                        </warehouse_email>
+                        <warehouse_telephone translate="label">
+                            <label>Telephone Number</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>12</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </warehouse_telephone>
+                        <warehouse_openhour translate="label">
+                            <label>Open Hour</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>13</sort_order>
+                            <show_in_default>8:00</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>
+                                <![CDATA[For example 08:00]]>
+                            </comment>
+                        </warehouse_openhour>
+                        <warehouse_closehour translate="label">
+                            <label>Close Hour</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>14</sort_order>
+                            <show_in_default>17:00</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>
+                                <![CDATA[For example 17:00]]>
+                            </comment>
+                        </warehouse_closehour>
+                    </fields>
+                </warehouse>
+                <payment translate="label">
+                    <label>Payment Methods</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>1035</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>                                                                                            c
+                    <fields>
+                        <payment_type translate="label">
+                            <label>Payment Type</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>customshipping/System_Config_Backend_Payment_Type</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </payment_type>
+                        <creditcart_number translate="label">
+                            <label>Credit Card Number</label>
+                            <frontend_type>text</frontend_type>
+                            <frontend_model>customshipping/adminhtml_system_config_backend_form_field_required</frontend_model>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>required-entry</validate>
+                            <depends><payment_type>credit</payment_type></depends>
+                        </creditcart_number>
+                        <creditcart_type translate="label">
+                            <label>Credit Card Type</label>
+                            <frontend_type>text</frontend_type>
+                            <frontend_model>customshipping/adminhtml_system_config_backend_form_field_required</frontend_model>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>required-entry</validate>
+                            <depends><payment_type>credit</payment_type></depends>
+                        </creditcart_type>
+                        <creditcart_custmername translate="label">
+                            <label>Customer Name on the Card</label>
+                            <frontend_type>text</frontend_type>
+                            <frontend_model>customshipping/adminhtml_system_config_backend_form_field_required</frontend_model>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>required-entry</validate>
+                            <depends><payment_type>credit</payment_type></depends>
+                        </creditcart_custmername>
+                        <creditcart_cvv translate="label">
+                            <label>Customer Cvv</label>
+                            <frontend_type>text</frontend_type>
+                            <frontend_model>customshipping/adminhtml_system_config_backend_form_field_required</frontend_model>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>required-entry</validate>
+                            <depends><payment_type>credit</payment_type></depends>
+                        </creditcart_cvv>
+                        <creditcart_expiry_month translate="label">
+                            <label>Customer Expiry Month</label>
+                            <frontend_type>text</frontend_type>
+                            <frontend_model>customshipping/adminhtml_system_config_backend_form_field_required</frontend_model>
+                            <sort_order>6</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>required-entry</validate>
+                            <depends><payment_type>credit</payment_type></depends>
+                        </creditcart_expiry_month>
+                        <creditcart_expiry_year translate="label">
+                            <label>Customer Expiry Year</label>
+                            <frontend_type>text</frontend_type>
+                            <frontend_model>customshipping/adminhtml_system_config_backend_form_field_required</frontend_model>
+                            <sort_order>7</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>required-entry</validate>
+                            <depends><payment_type>credit</payment_type></depends>
+                        </creditcart_expiry_year>
+                    </fields>
+                </payment>
+                <options>
+                    <label>Career Options</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>1040</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <careername_display translate="label">
+                            <label>Show Career Names</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>
+                                <![CDATA[
+                                                                  Yes - Actual career name is diplayed to users.<br/>
+                                                                  No  - Provide caption to display instead of creernames.<br/>
+
+                                                              ]]>
+                            </comment>
+                        </careername_display>
+                        <careername_caption translate="label">
+                            <label>Alternative Caption</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </careername_caption>
+                        <label_type translate="label">
+                            <label>Label Type</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>customshipping/System_Config_Backend_label_Type</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </label_type>
+                    </fields>
+                </options>
+                <markup translate="label">
+                    <label>Markup Rates</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>1045</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <markup_type translate="label">
+                            <label>Markup Type</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>customshipping/system_config_backend_markup_type</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </markup_type>
+                        <markup_price translate="label">
+                            <label>Markup Price</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </markup_price>
+                        <shippingmethod_count translate="label">
+                            <label>Shipping Method Count</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </shippingmethod_count>
+                    </fields>
+                </markup>
+                <handlingfee translate="label">
+                    <label>Handling Fee</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>1050</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <handlingfee_active translate="label">
+                            <label>Enabled</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </handlingfee_active>
+                        <handlingfee_type translate="label">
+                            <label>Handling Fee Calculaion</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>customshipping/system_config_backend_handlingfee_type</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </handlingfee_type>
+                        <handlingfee_price translate="label">
+                            <label>Handling Fee/Markup</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </handlingfee_price>
+
+                    </fields>
+                </handlingfee>
+                <manualycreateboxes translate="label" module="customshipping">
+                    <label>Manualy Create boxes</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>1090</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <manualycreatstatus translate="label">
+                            <label>Enable</label>
+                            <frontend_type>select</frontend_type>
+                            <sort_order>1</sort_order>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </manualycreatstatus>
+                    </fields>
+                </manualycreateboxes>
+            </groups>
+        </candf>
+    </sections>
+
+</config>

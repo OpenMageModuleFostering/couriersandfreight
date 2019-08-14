@@ -1,0 +1,186 @@
+<?php
+$_shipment = $this->getShipment();
+$orderid = $_shipment->getOrderId();
+$customshippingorder = Mage::getModel('customshipping/order')->getCollection()
+    ->addFieldToFilter('order_id', $orderid)->getData();
+
+$availableBoxes = $this->getAvailableboxes()->getData();
+$productSum= 0;
+
+
+if(isset($customshippingorder)) {
+
+    foreach($customshippingorder as $pro) {
+        $width = $pro['width'];
+        $height = $pro['height'];
+        $length = $pro['length'];
+        $proQty = $pro['qty'];
+        $proName =$pro['product_name'];
+        $proWeight = $pro['weight'];
+
+        $productSum+= $width * $height * $length *$proQty;
+        $proArr = $width * $height * $length *$proQty;
+        $products[$proName] = array('name'=>$proName,'width'=>$width , 'height'=>$height , 'length'=>$length , 'qty'=>$proQty ,'weight'=>$proWeight );
+
+    }
+
+    if(isset($availableBoxes)) {
+        foreach($availableBoxes as $availableBox) {
+
+            $boxId = $availableBox['boxes_id'];
+            $boxwidth = $availableBox['width'];
+            $boxheight = $availableBox['height'];
+            $boxlength = $availableBox['length'];
+            $BoxName = $availableBox['name'];
+            $checkbox= $boxwidth * $boxheight * $boxlength;
+
+            if($productSum <= $checkbox) {
+                $availableBoxForService[] = $checkbox;
+            }else if($checkbox <$productSum) {
+                $availableBoxForService[] = $productSum - $checkbox;
+                $availableBoxForService[] = $checkbox;
+
+                if(($productSum - $checkbox) > 0) {
+
+                }
+            }
+            $boxes[$boxId]= array('name'=>$BoxName, 'width'=>$boxwidth , 'height'=> $boxheight ,'length'=> $boxlength);
+        }
+    }
+
+
+
+    foreach($boxes as $boxIndex=>$box){
+        $boxVolume[$boxIndex] = $box['width']*$box['height']*$box['length'];
+    }
+    asort($boxVolume);
+
+    foreach($products as $productIndex=>$product){
+        for($y=1;$y<=$product['qty'];$y++){
+            $productVolume[$productIndex.'_'.$y] = $product['width']*$product['height']*$product['length'];
+        }
+    }
+    $SumOFProductVolumes = array_sum($productVolume);
+    asort($productVolume);
+
+    $volumeRemaining = 0;
+    $productsFilling = 0;
+    foreach($boxVolume As $BoxName=>$VolumeB){
+
+        $volTotalR = $SumOFProductVolumes-$productsFilling;
+        $existance =0;
+        $x=0;
+        if($productsFilling >= $SumOFProductVolumes){
+            break;
+        }
+        if($volumeRemaining <= $VolumeB){
+            $volumeForBox = 0;
+            foreach($productVolume  As $productName=>$VolumeP){
+                $existance = 0;
+                $volumeRemaining = $VolumeB - $productsFilling;
+                foreach($boxfilledProducts As $index=>$filledNames){
+                    if(in_array($productName , $filledNames)){
+                        $existance = 1;
+                        break;
+                    }else{
+                        $existance = 0;
+                    }
+                }
+
+                if($existance == 1){
+                    continue;
+                }else{
+                    $RemainingvolumeForBox = $VolumeB -$volumeForBox;
+                    if($VolumeP>$VolumeB || $volumeForBox > $VolumeB || $volumeRemaining>$VolumeB || $RemainingvolumeForBox<$VolumeP  ){
+                        break;
+                    } else{
+                        $productsFilling = $productsFilling +   $VolumeP;
+                        $volumeForBox = $volumeForBox + $VolumeP;
+                        $boxfilledProducts[$BoxName][]=$productName;
+                        $productId = explode('_',$productName);
+
+                        $productsWithoutQty = $products;
+                        unset($productsWithoutQty[$productId[0]]['qty']);
+                        $boxfilledProductsDetails[$BoxName][$productName]=$productsWithoutQty[$productId[0]];
+                        $netwieghtoftheBox = $netwieghtoftheBox + $productsWithoutQty[$productId[0]]['weight'];
+                    }
+                }
+            }
+            if(isset($boxfilledProducts[$BoxName])){
+                $boxfilledProducts[$BoxName]['BoxDetails']['NetWeight'] = $netwieghtoftheBox;
+                $boxfilledProducts[$BoxName]['BoxDetails']['width'] = $boxes[$BoxName]['width'];
+                $boxfilledProducts[$BoxName]['BoxDetails']['height']= $boxes[$BoxName]['height'];
+                $boxfilledProducts[$BoxName]['BoxDetails']['length']= $boxes[$BoxName]['length'];
+            }
+            $netwieghtoftheBox = 0;
+        }
+    }
+}
+?>
+
+<?php foreach($boxfilledProducts as $availableBoxkey=>$val) { ?>
+    <?php
+    if(isset($availableBoxkey)) {
+        foreach($availableBoxes as $availableBox) {
+            $boxId = $availableBox['boxes_id'];
+            if($availableBoxkey == $boxId) {
+                $boxwidth = $availableBox['width'];
+                $boxheight = $availableBox['height'];
+                $boxlength = $availableBox['length'];
+                $BoxName = $availableBox['name'];
+                $checkbox= $boxwidth * $boxheight * $boxlength;
+                $availableBoxesArray[]= array('box_id'=>$boxId,'name'=>$BoxName, 'width'=>$boxwidth , 'height'=> $boxheight ,'length'=> $boxlength);
+            }
+        }
+    }
+}
+?>
+
+<?php
+$avalableBoxArray = Mage::getSingleton('core/session')->setAvalableBoxArray($boxfilledProducts);
+?>
+<div class="entry-edit">
+    <div class="entry-edit-head">
+        <h4><?php echo $this->__('Available Boxes'); ?></h4>
+    </div>
+    <div class="fieldset">
+        <table cellspacing="0" class="form-list">
+            <tr class="boxesvalue">
+                <?php foreach($boxfilledProducts as $availableBox) { ?>
+                <div class="fieldset">
+                    <h2><?php echo $availableBox['BoxDetails']['name'];?></h2>
+                    <h3>Box dimentions - <?php echo $availableBox['BoxDetails']['length'];?> * <?php echo $availableBox['BoxDetails']['width'];?> * <?php echo $availableBox['BoxDetails']['height'];?></h3>
+                    <?php
+                    $availableBoxArray = $availableBox;
+                    unset($availableBoxArray['BoxDetails']);
+                    echo '<ul style="padding: 1%; border: 1px solid rgb(93, 73, 73);">';
+                    foreach($availableBoxArray as $proArray) {
+                        ?>
+                        <li class="product-in-box"><?php echo $proArray;?></li>
+                    <?php
+                    }
+                    echo '</ul>';
+                    ?>
+                </div>
+            </tr>
+            <?php
+            $availableBoxChecked = Mage::getSingleton('core/session')->getAutoSelectedBoxCheckStatus();
+            ?>
+            <tr>
+                <?php }
+                echo '<div class="fieldset">';
+                if($availableBoxChecked){
+                    $checked = "checked";
+                }
+                else{
+                    $checked ="";
+                }
+                echo '<input type="checkbox" name="check_auto_selected_box" value="2"  '. $checked .' id="check_auto_selected_box"  />';
+                echo '<h4>If you select this check box, Auto generated boxes will be sent to the quote.</h4>';
+                echo '</div>';
+
+                ?>
+            </tr>
+        </table>
+    </div>
+</div>

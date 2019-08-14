@@ -1,0 +1,601 @@
+<?php
+
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+
+$settings_careername_display = Mage::getStoreConfig('candf/options/careername_display');
+$settings_careername_caption = Mage::getStoreConfig('candf/options/careername_caption');
+
+?>
+<?php
+$items = Mage::getSingleton('checkout/session')->getQuote()->getAllItems();
+$weight = 0;
+foreach($items as $item) {
+    $weight= ($item->getWeight()) ;
+    if($weight > '35') {
+        $weight2[]  = $weight;
+    }
+    if($weight > '1000') {
+        $weight3[]  = $weight;
+    }
+}
+?>
+<div class="shipping">
+<h2><?php echo $this->__('Estimate Shipping and Tax') ?></h2>
+<div class="shipping-form">
+<form action="<?php echo $this->getUrl('checkout/cart/estimatePost') ?>" method="post" id="shipping-zip-form">
+    <p><?php echo $this->__('Enter your destination to get a shipping estimate.') ?></p>
+    <ul class="form-list">
+        <li>
+            <label for="country" class="required"><em>*</em><?php echo $this->__('Country') ?></label>
+            <div class="input-box">
+                <?php echo Mage::getBlockSingleton('directory/data')->getCountryHtmlSelect($this->getEstimateCountryId()) ?>
+            </div>
+        </li>
+        <?php //if($this->getStateActive()): ?>
+        <li id="region_container">
+            <label for="region_id"<?php if ($this->isStateProvinceRequired()) echo ' class="required"' ?>><?php if ($this->isStateProvinceRequired()) echo '<em>*</em>' ?><?php echo $this->__('State/Province') ?></label>
+            <div class="input-box">
+                <select id="region_id" name="region_id" title="<?php echo $this->__('State/Province') ?>" style="display:none;"<?php echo ($this->isStateProvinceRequired() ? ' class="validate-select"' : '') ?>>
+                    <option value=""><?php echo $this->__('Please select region, state or province') ?></option>
+                </select>
+                <script type="text/javascript">
+                    //<![CDATA[
+                    $('region_id').setAttribute('defaultValue',  "<?php echo $this->getEstimateRegionId() ?>");
+                    //]]>
+                </script>
+                <input type="text" id="region" name="region" value="<?php echo $this->escapeHtml($this->getEstimateRegion()) ?>"  title="<?php echo $this->__('State/Province') ?>" class="input-text" style="display:none;" />
+            </div>
+        </li>
+        <?php //endif; ?>
+        <?php // if($this->getCityActive()): ?>
+        <li id="city_container">
+            <label for="city"<?php if ($this->isCityRequired()) echo ' class="required"' ?>><?php if ($this->isCityRequired()) echo '<em>*</em>' ?><?php echo $this->__('City') ?></label>
+            <div class="input-box">
+                <input class="input-text<?php if ($this->isCityRequired()):?> required-entry<?php endif;?>" id="city" type="text" name="estimate_city" value="<?php echo $this->escapeHtml($this->getEstimateCity()) ?>" />
+            </div>
+        </li>
+        <?php // endif; ?>
+        <li id="postcode_container">
+            <label for="postcode"<?php if ($this->isZipCodeRequired()) echo ' class="required"' ?>><?php if ($this->isZipCodeRequired()) echo '<em>*</em>' ?><?php echo $this->__('Zip/Postal Code') ?></label>
+            <div class="input-box">
+                <input class="input-text validate-postcode<?php if ($this->isZipCodeRequired()):?> required-entry<?php endif;?>" type="text" id="postcode" name="estimate_postcode" value="<?php echo $this->escapeHtml($this->getEstimatePostcode()) ?>" />
+            </div>
+        </li>
+    </ul>
+    <li id="cnfpostcode_container">
+        <label for="pcs" class="required"><em>*</em><?php echo $this->__('Suburb / Postcode') ?></label>
+        <div id="estimate_field" class="input-box estimate-field">
+            <input class="pcs-field required-entry" type="text" id="pcs" name="pcs" value="<?php if ($this->getEstimatePostcode()): ?><?php echo $this->htmlEscape($this->getEstimatePostcode() . ' ' . $this->getEstimateCity() . ' ' . $this->getEstimateRegion()) ?><?php endif; ?>" />
+        </div>
+    </li>
+
+
+    <?php
+
+    if(isset($weight3)) {
+        echo '<input type="hidden" name="cart-popup-yes" id="popup-yes" value="">';
+        echo '<input type="hidden" name="cart-popup-no" id="popup-no" value="">';
+        echo '<input type="hidden" name="cart-popup-no" id="test" value="123456">';
+
+
+        ?>
+
+        <div class="buttons-set">
+            <button type="button" class="cd-popup-trigger button" title="<?php echo $this->__('Get a Quote') ?>" onclick = "document.getElementById('light2').style.display='block';document.getElementById('fade').style.display='block'"><span><span><?php echo $this->__('Get a Quote') ?></span></span></button>
+        </div>
+    <?php
+    }
+    elseif(isset($weight2)) {
+        echo '<form>';
+        echo '<input type="hidden" name="cart-popup-yes" id="popup-yes" value="">';
+        echo '<input type="hidden" name="cart-popup-no" id="popup-no" value="">';
+        echo '<input type="hidden" name="cart-popup-no" id="test" value="123456">';
+        echo '</form>';
+
+
+        ?>
+
+        <div class="buttons-set">
+            <button type="button" class="cd-popup-trigger button" title="<?php echo $this->__('Get a Quote') ?>" onclick = "document.getElementById('light').style.display='block';document.getElementById('fade').style.display='block'"><span><span><?php echo $this->__('Get a Quote') ?></span></span></button>
+        </div>
+    <?php
+    }else {
+        ?>
+        <div class="buttons-set">
+            <button type="button" title="<?php echo $this->__('Get a Quote') ?>" onclick="coShippingMethodForm.submit()" class="button"><span><span><?php echo $this->__('Get a Quote') ?></span></span></button>
+        </div>
+    <?php
+    }
+    ?>
+
+
+
+
+
+</form>
+<script type="text/javascript">
+
+    jQuery.noConflict();
+    (function( $ ) {
+        $(function() {
+            // More code using $ as alias to jQuery
+
+            //jQuery(document).ready(function($){
+            //open popup
+            $('cd-popup-trigger').on('click', function(event){
+                event.preventDefault();
+                $('.cd-popup').addClass('is-visible');
+            });
+
+            //close popup
+            $('.cd-popup').on('click', function(event){
+                if( $(event.target).is('.cd-popup-close') || $(event.target).is('.cd-popup') ) {
+                    event.preventDefault();
+                    $(this).removeClass('is-visible');
+                }
+            });
+            //close popup when clicking the esc keyboard button
+            $(document).keyup(function(event){
+                if(event.which=='27'){
+                    $('.cd-popup').removeClass('is-visible');
+                }
+            });
+
+            $("#cart-popup-yes").click(function(){
+                $("#popup-yes").val("select-yes");
+                $("#popup-no").val("");
+
+                <?php
+               Mage::getSingleton('core/session')->setPopupvalue('select-set-yes');
+                ?>
+                // coShippingMethodForm.submit();
+            });
+
+            $("#cart-popup-no").click(function(){
+                $("#popup-no").val("select-no");
+                $("#popup-yes").val("");
+
+
+                <?php
+               // Mage::getSingleton('core/session')->unsPopupvalue();
+               Mage::getSingleton('core/session')->setPopupvalue('select-set-no');
+                ?>
+                coShippingMethodForm.submit();
+            });
+
+
+            $("#item-over-thousand").click(function(){
+                coShippingMethodForm.submit();
+            });
+
+
+            //});
+
+        });
+    })(jQuery);
+
+
+    //<![CDATA[
+    new RegionUpdater('country', 'region', 'region_id', <?php echo $this->helper('directory')->getRegionJson() ?>);
+    //]]>
+</script>
+<?php
+
+$settings_careername_display = Mage::getStoreConfig('candf/options/careername_display');
+$settings_careername_caption = Mage::getStoreConfig('candf/options/careername_caption');
+$_shippingRateGroups = $this->getEstimateRates();
+
+
+if (($_shippingRateGroups = $this->getEstimateRates())):
+//
+    ?>
+    <form id="co-shipping-method-form" action="<?php echo $this->getUrl('checkout/cart/estimateUpdatePost') ?>">
+        <dl class="sp-methods">
+            <?php
+            $j = 0;
+            $lowstPrice = 0;
+            $lwestTime = 0;
+            $chpIndexI = 0;
+            $chpIndexJ = 0;
+            $fstIndexI = 0;
+            $fstIndexJ = 0;
+
+            foreach ($_shippingRateGroups as $code => $_rates) {
+                $i = 0;
+
+                foreach ($_rates as $_rate) {
+                    if ($_rate->getErrorMessage()) {
+                        $chpIndexI = null;
+                        $chpIndexJ = null;
+                        $fstIndexI = null;
+                        $fstIndexJ = null;
+                    } else {//time in
+                        if ($this->htmlEscape($_rate->getCode()) != 'flatrate_flatrate') {
+                            //flatrate_flatrate
+                            $getTime = substr($_rate->getMethodTitle(), -6); //
+                            $time = explode(':', $getTime);
+                            $infloatTime = (float) ($time[0] . substr($time[1], 0, 1));
+
+                            if ($lwestTime == 0) {
+                                $lwestTime = $infloatTime;
+                            }
+                            if ((float) $lwestTime > (float) $infloatTime) {
+                                $lwestTime = $infloatTime;
+                                $fstIndexI = $i;
+                                $fstIndexJ = $j;
+                            }
+                            $price = explode('$', $this->getShippingPrice($_rate->getPrice(), $this->helper('tax')->displayShippingPriceIncludingTax()));
+
+                            if ($lowstPrice == 0) {
+                                $lowstPrice = $price[1];
+                            }
+                            if ((float) $lowstPrice > (float) $price[1]) {
+                                $chpIndexI = $i;
+                                $chpIndexJ = $j;
+                                $lowstPrice = $price[1];
+                            }
+                        }
+                    }
+                    $i++;
+                }
+                $j++;
+            }
+
+            $j = 0;
+
+            $lst = 0;
+            $low = 0;
+
+            foreach ($_shippingRateGroups as $code => $_rates):
+                ?>
+                <dt><?php //$this->getCarrierName($code)   ?></dt>
+                <dd>
+                    <ul>
+                        <?php
+                        if (count($_shippingRateGroups) == 1) {
+                            ?>
+                            <!-- <label> Shipping method is currently unavailable. </label>-->
+
+                        <?php
+                        }
+
+                        $i = 0;
+                        $k=1;
+                        foreach ($_rates as $_rate):
+
+
+
+                            ?>
+                            <?php
+
+                            ?>
+                            <li<?php if ($_rate->getErrorMessage()) echo ' class="error-msg"'; ?>>
+                                <?php if ($_rate->getErrorMessage()): ?>
+                                    <?php echo $_rate->getErrorMessage() ?>
+                                <?php else:
+                                    ?>
+
+                                    <input name="estimate_method" type="radio" value="<?php echo $this->htmlEscape($_rate->getCode()) ?>"  id="s_method_<?php echo $_rate->getCode() ?>"<?php if ($_rate->getCode() === $this->getAddressShippingMethod()) echo ' checked="checked"' ?> class="<?php echo $_rate->getMethodTitle();?>"/>
+
+
+                                    <label for="s_method_<?php echo $_rate->getCode() ?>">
+                                        <?php
+
+
+                                        ?>
+                                        <?php
+                                        if(($_rate->getCode() == "candf_customshipping_Free Shipping") || ($_rate->getCode() == "candf_customshipping_Flat Rate Shipping") )
+                                        {
+                                            $titleShipping= $_rate->getMethodTitle();
+                                        }
+                                        else if($settings_careername_display ==0&& (!preg_match('/Fixed/',$_rate->getMethodTitle()))){
+                                            $deliverTime =split("\(", $_rate->getMethodTitle());
+                                            if($settings_careername_caption!='')
+                                                $titleShipping = $settings_careername_caption ." ( ".$deliverTime['1'].'  (' .$deliverTime[2];
+                                            else
+                                                $titleShipping= 'Shipping Option '.$deliverTime['1'].' (' .$deliverTime[2];
+                                        }else{
+                                            $titleShipping= $_rate->getMethodTitle();
+                                        }
+                                        echo $titleShipping.' ';
+
+                                        ?>
+                                        <?php
+
+                                        $_excl = $this->getShippingPrice($_rate->getPrice(), $this->helper('tax')->displayShippingPriceIncludingTax());
+                                        ?>
+                                        <?php
+                                        $_incl = $this->getShippingPrice($_rate->getPrice(), true);
+                                        echo $_excl;
+                                        ?>
+
+                                        <?php if ($this->helper('tax')->displayShippingBothPrices() && $_incl != $_excl): ?>
+                                            (<?php echo $this->__('Incl. Tax'); ?>
+                                            <?php // echo $_incl; ?>)
+                                        <?php endif; ?>
+                                    </label>
+                                    <?php echo $_rate->getMethodTitle();?>
+                                    <?php
+                                    // $_excl;
+                                    if ($i == $chpIndexI && $j == $chpIndexJ && $i == $fstIndexI && $j == $fstIndexJ) {
+                                        ?>
+                                        <span style="background-color: #9EE9F5" > Cheapest & Fastest </span>
+                                    <?php } elseif ($i == $chpIndexI && $j == $chpIndexJ) { ?>
+                                        <span style="background-color: #B3FA90" > Cheapest </span>
+                                    <?php } elseif ($i == $fstIndexI && $j == $fstIndexJ) {
+                                        ?>
+                                        <span style="background-color: #F7A86B" > Fastest </span>
+                                    <?php }
+                                    ?>
+                                <?php endif ?>
+                            </li>
+                            <?php
+                            $i++;
+                            $k++;
+                        endforeach;
+                        ?>
+                    </ul>
+                </dd>
+
+                <?php
+                $j++;
+            endforeach;
+            ?>
+        </dl>
+        <div class="additional-services">
+            <div class="additional-services-loader" style="display: none">
+                <img src="<?php echo $this->getSkinUrl('/images/candf/loader_gif.gif');?>" style="width: 50% !important;">
+            </div>
+
+            <div class="select-additionalservice"></div>
+        </div>
+        <div class="buttons-set">
+            <button type="submit" title="<?php echo $this->__('Update Total') ?>" class="button" name="do" value="<?php echo $this->__('Update Total') ?>"><span><span><?php echo $this->__('Update Total') ?></span></span></button>
+        </div>
+    </form>
+<?php endif;
+?>
+
+<script type="text/javascript">
+
+
+    //<![CDATA[
+    var coShippingMethodForm = new VarienForm('shipping-zip-form');
+    var countriesWithOptionalZip = <?php echo $this->helper('directory')->getCountriesWithOptionalZip(true) ?>;
+
+    coShippingMethodForm.submit = function () {
+        var country = $F('country');
+        var optionalZip = false;
+
+        for (i=0; i < countriesWithOptionalZip.length; i++) {
+            if (countriesWithOptionalZip[i] == country) {
+                optionalZip = true;
+            }
+        }
+        if (optionalZip) {
+            $('postcode').removeClassName('required-entry');
+        }
+        else {
+            $('postcode').addClassName('required-entry');
+        }
+
+        return VarienForm.prototype.submit.bind(coShippingMethodForm)();
+    }
+
+    Event.observe('country','change',function() {
+        showHideInfo();
+    });
+
+    showHideInfo();
+    function showHideInfo() {
+        if ($('country').value == 'AU') {
+
+
+            document.getElementById('region_container').style.display="none"
+            document.getElementById('city_container').style.display="none"
+            document.getElementById('postcode_container').style.display="none"
+            document.getElementById('cnfpostcode_container').style.display=""
+        } else {
+            document.getElementById('region_container').style.display="";
+            document.getElementById('city_container').style.display="";
+            document.getElementById('postcode_container').style.display="";
+            document.getElementById('cnfpostcode_container').style.display="none";
+
+        }
+    }
+
+
+    new Autocomplete('pcs', {
+        serviceUrl: "<?php echo $this->getUrl('customshipping/cnfcart/autocompletecart', array('_secure' => Mage::app()->getStore()->isCurrentlySecure())); ?>",
+        onSelect: function(value, data) {
+            $('city').value = data[0]['city'];
+            $('postcode').value = data[0]['postcode'];
+
+            var myChoice = data[0]['region_id'];
+
+            $$('select#region_id option').each(function(o) {
+                o.selected = o.readAttribute('value') == myChoice;
+            });
+
+        },
+        onLoadStart: function() {
+            $('city').value = '';
+            $('postcode').value = '';
+            $('region_id').value = '';
+            $('estimate_field').addClassName('active');
+        },
+        onLoadComplete: function() {
+            $('estimate_field').removeClassName('active');
+        },
+        onAway: function() {
+            if (!$('city').value) {
+                $('pcs').value = '';
+                pcsBlur();
+            }
+        }
+    })
+
+    //]]>
+</script>
+
+
+<script>
+    jQuery.noConflict();
+    (function( $ ) {
+        $(function() {
+            $(".sp-methods li input").click(function() {
+                var id= $(this).attr("class");
+                $(".additional-services-loader").show();
+
+                $.ajax({
+                    type: "POST",
+                    url: "<?php echo $this->getUrl('customshipping/cnfcart/getAdditionalservices') ?>",
+                    data: { 'id' : id },
+                    dataType: 'html',
+                    success: function(data){
+                        $(".additional-services-loader").hide();
+                        $(".select-additionalservice").html(data);
+
+                    }
+                });
+
+            });
+
+        });
+    })(jQuery);
+
+</script>
+
+
+</div>
+</div>
+
+
+
+
+<style>
+    .black_overlay{
+        display: none;
+        position: absolute;
+        top: 0%;
+        left: 0%;
+        width: 100%;
+        height: 100%;
+        background-color: black;
+        z-index:1001;
+        -moz-opacity: 0.8;
+        opacity:.80;
+        filter: alpha(opacity=80);
+    }
+    .white_content {
+        display: none;
+        position: absolute;
+        top: 25%;
+        left: 25%;
+        width: 50%;
+        height: 35%;
+        padding: 16px;
+        border: 16px solid orange;
+        background-color: white;
+        z-index:1002;
+        overflow: auto;
+    }
+
+
+
+    ////////////
+
+    .cd-popup-container .cd-buttons:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+    .cd-popup-container .cd-buttons li {
+        float: left;
+        width: 50%;
+    }
+
+    .cd-popup-container .cd-buttons input {
+        display: block;
+        height: 60px;
+        line-height: 60px;
+        text-transform: uppercase;
+        color: #FFF;
+        -webkit-transition: background-color 0.2s;
+        -moz-transition: background-color 0.2s;
+        transition: background-color 0.2s;
+    }
+
+    .cd-popup-container .cd-buttons li:first-child input {
+        background: #fc7169;
+        border:none;
+        width: 100%;
+    }
+    .no-touch .cd-popup-container .cd-buttons li:first-child input:hover {
+        background-color: #fc8982;
+    }
+    .cd-popup-container .cd-buttons li:last-child input {
+        background: #b6bece;
+        border:none;
+        width: 100%;
+    }
+    .no-touch .cd-popup-container .cd-buttons li:last-child input:hover {
+        background-color: #c5ccd8;
+        color: black;
+    }
+
+    .popup-ok-button {
+        background: none repeat scroll 0 0 #fbfaf6;
+        margin: 0px auto;
+        padding: 0;
+    }
+
+
+    .cd-popup-container .cd-buttons li:last-child input {
+        background: none repeat scroll 0 0 orange;
+        border: medium none;
+        width: 100%;
+    }
+    .checkout-cart-index #pcs {
+        width: 100%;
+    }
+
+    #cnfpostcode_container {
+        list-style: none;
+        width: 100%;
+    }
+
+    #estimate_field {
+        width: 100%;
+        margin-bottom: 2%;
+    }
+
+
+
+    ////////////
+</style>
+

@@ -1,0 +1,98 @@
+
+<layout version="0.1.0">
+    <block type="customshipping/adminhtml_zone" name="zone" />
+    <customshipping_adminhtml_rule_index>
+        <reference name="content">
+            <block type="customshipping/adminhtml_rule" name="customshipping_rule">
+                <block type="customshipping/adminhtml_rule_grid" name="customshipping_rule_grid"/>
+            </block>
+        </reference>
+    </customshipping_adminhtml_rule_index>
+    <customshipping_adminhtml_rule_edit>
+        <reference name="head">
+
+        </reference>
+        <reference name="left">
+            <block type="customshipping/adminhtml_rule_edit_tabs" name="customshipping_rule_edit_tabs">
+                <block type="customshipping/adminhtml_rule_edit_tab_main" name="customshipping_rule_edit_tab_main" />
+
+                <block type="customshipping/adminhtml_rule_edit_tab_actions" name="customshipping_rule_edit_tab_actions" />
+                <action method="addTab"><name>main_section</name><block>customshipping_rule_edit_tab_main</block></action>
+
+                <action method="addTab"><name>actions_section</name><block>customshipping_rule_edit_tab_actions</block></action>
+            </block>
+        </reference>
+    </customshipping_adminhtml_rule_edit>
+
+    <customshipping_adminhtml_shipment_index>
+        <reference name="content">
+            <block type="customshipping/adminhtml_shipment" name="customshipping_shipment">
+                <block type="customshipping/adminhtml_shipment_grid" name="customshipping_shipment_grid" />
+            </block>
+        </reference>
+    </customshipping_adminhtml_shipment_index>
+
+    <customshipping_adminhtml_shipment_edit>
+        <reference name="head">
+            <action method="addItem"><type>skin_css</type><name>customshipping/styles.css</name></action>
+        </reference>
+        <reference name="content">
+            <block type="customshipping/adminhtml_shipment_edit" name="customshipping_shipment_edit" />
+        </reference>
+        <reference name="left">
+            <block type="customshipping/adminhtml_shipment_edit_tabs" name="customshipping_shipment_edit_tabs">
+                <action method="addTab">
+                    <name>customshipping_shipment_edit_tab_form</name>
+                    <block>customshipping/adminhtml_shipment_edit_tab_form</block>
+                </action>
+            </block>
+        </reference>
+    </customshipping_adminhtml_shipment_edit>
+
+    <!-- Below are the necessary JS files for the WYSIWYG editor -->
+    <default>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/customshipping/customshipping.js</name>
+            </action>
+            <action method="setCanLoadExtJs">
+                <flag>1</flag>
+            </action>
+            <action method="addJs">
+                <script>mage/adminhtml/variables.js</script>
+            </action>
+            <action method="addJs">
+                <script>mage/adminhtml/wysiwyg/widget.js</script>
+            </action>
+            <action method="addJs">
+                <script>lib/flex.js</script>
+            </action>
+            <action method="addJs">
+                <script>lib/FABridge.js</script>
+            </action>
+            <action method="addJs">
+                <script>mage/adminhtml/flexuploader.js</script>
+            </action>
+            <action method="addJs">
+                <script>mage/adminhtml/browser.js</script>
+            </action>
+            <action method="addJs">
+                <script>prototype/window.js</script>
+            </action>
+            <action method="addItem">
+                <type>js_css</type>
+                <name>prototype/windows/themes/default.css</name>
+            </action>
+            <action method="addItem">
+                <type>js_css</type>
+                <name>prototype/windows/themes/magento.css</name>
+            </action>
+            <action method="addCss">
+                <stylesheet>lib/prototype/windows/themes/magento.css</stylesheet>
+            </action>
+        </reference>
+    </default>
+
+
+</layout>

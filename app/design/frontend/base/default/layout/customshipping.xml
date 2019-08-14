@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout>
+    <default>
+        <reference name="head" >
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/customshipping/autocomplete.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/customshipping/custom.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/customshipping/product.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/customshipping/cartpopup/modernizr.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/customshipping/cartpopup/main.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/customshipping/jquery/jquery-1.7.1-min.js</name>
+            </action>
+            <action method="addCss">
+                <stylesheet>css/customshipping/candf-cart.css</stylesheet>
+            </action>
+            <action method="addCss">
+                <stylesheet>css/customshipping/product.css</stylesheet>
+            </action>
+            <action method="addCss">
+                <stylesheet>css/customshipping/cartpopup/style.css</stylesheet>
+            </action>
+        </reference>
+    </default>
+    <checkout_cart_index>
+        <reference name="checkout.cart.shipping">
+            <action method="setTemplate" >
+                <template>candf/customshipping/checkout/cart/shipping.phtml</template>
+            </action>
+        </reference>
+    </checkout_cart_index>
+    <checkout_onepage_shippingmethod>
+        <reference name="root">
+            <action method="setTemplate">
+                <template>candf/customshipping/checkout/onepage/shipping_method/available.phtml</template>
+            </action>
+        </reference>
+    </checkout_onepage_shippingmethod>
+</layout>
+	
